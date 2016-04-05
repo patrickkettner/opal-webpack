@@ -131,7 +131,7 @@ describe('Opal loader', function(){
   });
 
   xit("loads require_tree without leading dot", function (done) {
-
+    // should be same result as loads require_tree
   });
 
   it("loads require_relative", function (done) {
