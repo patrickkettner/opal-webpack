@@ -70,14 +70,14 @@ describe('Opal loader', function(){
     fsExtra.copy(dependencyBackup, dependencyMain, {clobber: true}, done)
   })
 
-  it.only("loads basic files", function (done) {
+  it("loads basic files", function (done) {
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/basic.js'
     });
     assertBasic(config, done)
   });
 
-  it("loads requires", function (done){
+  it.only("loads requires", function (done){
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/requires.js'
     });
@@ -120,6 +120,8 @@ describe('Opal loader', function(){
           expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
           expect(subject).to.match(/Opal\.cdecl\(\$scope, 'THERE', 456\)/);
           expect(subject).to.not.match(currentDirectoryExp)
+          expect(subject).to.match(/Opal\.modules\["tree\/file1"\]/)
+          expect(subject).to.match(/Opal\.modules\["tree\/file2"\]/)
 
           return done();
         });

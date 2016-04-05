@@ -55,9 +55,11 @@ function resolveFilename(filename) {
 function getCompiler(source, options) {
   // it's important to not give an absolute path to Opal (only relative to load path)
   // otherwise absolute paths end up in the compiled code
-  const relativePath = resolveFilename(options.filename).relative
+  const relativePath = options.relativeFileName
   // don't want Opal.modules to have an extension
+  console.log(`compiler, trying to trim ${path.extname(relativePath)} off ${relativePath}`)
   const withoutExtension = relativePath.replace(path.extname(relativePath), '')
+  console.log(`compiler, got ${withoutExtension}`)
   const compilerOptions = Object.assign({
     file: withoutExtension, // opal calls it file
     requirable: true
@@ -115,11 +117,12 @@ function transpile(source, options) {
   compiler.$required_trees().forEach(function (dirname) {
     // path will only be relative to the file we're processing
     let resolved = path.resolve(options.filename, '..', dirname)
+    console.log(`require trees from ${dirname} to ${resolved}`)
     // TODO: Look into making this async
     let files = fs.readdirSync(resolved)
     let withPath = []
     // fs.readdir only returns the filenames, not the base directory
-    files.forEach(function (filename) { withPath.push(path.join(resolved, filename)) })
+    files.forEach(function (filename) { withPath.push(path.join(dirname, filename)) })
     addRequires(withPath)
   })
 
@@ -137,14 +140,15 @@ module.exports = function(source) {
 
   const webpackRemainingChain = loaderUtils.getRemainingRequest(this).split('!');
   const filename = webpackRemainingChain[webpackRemainingChain.length - 1];
-  console.log(`filename is ${filename}`)
   const globalOptions = this.options.opal || {};
   const loaderOptions = loaderUtils.parseQuery(this.query);
   const userOptions = Object.assign({}, globalOptions, loaderOptions);
+  const relativeFileName = resolveFilename(filename).relative
   const defaultOptions = {
     sourceRoot: process.cwd(),
     currentLoader: getCurrentLoader(this).path,
     filename: filename,
+    relativeFileName: relativeFileName,
     cacheIdentifier: JSON.stringify({
       'opal-loader': pkg.version,
       'opal-compiler': opalVersion,
