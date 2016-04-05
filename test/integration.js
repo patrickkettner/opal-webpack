@@ -29,6 +29,11 @@ describe('Opal loader', function(){
   function assertBasic(config, done) {
     webpack(config, (err, stats) => {
       expect(err).to.be(null);
+      let errors = stats.compilation.errors
+      if (errors.length > 0) {
+        console.dir(errors[0].stack)
+      }
+      expect(errors).to.be.empty()
 
       fs.readdir(outputDir, (err, files) => {
         expect(err).to.be(null);
@@ -58,7 +63,7 @@ describe('Opal loader', function(){
     fsExtra.copy(dependencyBackup, dependencyMain, {clobber: true}, done)
   })
 
-  it("loads correctly", done => {
+  it.only("loads correctly", done => {
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/basic.js'
     });
@@ -72,6 +77,7 @@ describe('Opal loader', function(){
     });
     webpack(config, (err, stats) => {
       expect(err).to.be(null)
+      expect(stats.compilation.errors).to.be.empty()
       fs.writeFileSync(dependencyMain, 'HELLO=456')
       setTimeout(() => {
         fs.readdir(outputDir, (err, files) => {
@@ -96,6 +102,7 @@ describe('Opal loader', function(){
     });
     webpack(config, (err, stats) => {
       expect(err).to.be(null);
+      expect(stats.compilation.errors).to.be.empty()
 
       fs.readdir(outputDir, (err, files) => {
         expect(err).to.be(null);
@@ -118,6 +125,7 @@ describe('Opal loader', function(){
     });
     webpack(config, (err, stats) => {
       expect(err).to.be(null);
+      expect(stats.compilation.errors).to.be.empty()
 
       fs.readdir(outputDir, (err, files) => {
         expect(err).to.be(null);
@@ -141,6 +149,7 @@ describe('Opal loader', function(){
     });
     webpack(config, (err, stats) => {
       expect(err).to.be(null);
+      expect(stats.compilation.errors).to.be.empty()
 
       fs.readdir(outputDir, (err, files) => {
         expect(err).to.be(null);
@@ -167,6 +176,7 @@ describe('Opal loader', function(){
     });
     webpack(config, (err, stats) => {
       expect(err).to.be(null);
+      expect(stats.compilation.errors).to.be.empty()
 
       fs.readdir(outputDir, (err, files) => {
         expect(err).to.be(null);
@@ -212,6 +222,7 @@ describe('Opal loader', function(){
       },
     });
     assertBasic(config, () => {
+      // run again and use the cache
       assertBasic(config, () => {
         fs.readdir(cacheDir, (err, files) => {
           expect(err).to.be(null);
@@ -223,7 +234,6 @@ describe('Opal loader', function(){
   });
 
   xit("expires the cache properly", function (done) {
-
   });
 
   xit("allows caching with a custom identifier", function (done) {

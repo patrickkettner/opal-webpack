@@ -5,7 +5,9 @@ import loaderUtils from "loader-utils"
 import { SourceNode, SourceMapConsumer, SourceMapGenerator } from 'source-map'
 import path from "path"
 import fs from "fs";
+//const cache = require('./lib/fs-cache.js')
 
+const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
 const LOAD_PATH = process.env.OPAL_LOAD_PATH ? process.env.OPAL_LOAD_PATH.split(":") : [];
 
 if (LOAD_PATH.length === 0) {
@@ -51,8 +53,10 @@ function resolveFilename(loaderContext, filename) {
   }
 }
 
-function getCompiler(source, resourcePath, query) {
-  const compilerOptions = Object.assign({file: resourcePath}, loaderUtils.parseQuery(query));
+function getCompiler(source, options) {
+  const compilerOptions = Object.assign({file: options.file}, options);
+  // opal calls it file
+  delete compilerOptions.filename
   return Opal.Opal.Compiler.$new(source, Opal.hash(compilerOptions));
 }
 
@@ -73,12 +77,8 @@ function processSourceMaps(compiler, source, resourcePath, rawResult, prepend) {
   return JSON.parse(node.toStringWithSourceMap().map.toString())
 }
 
-module.exports = function(source) {
-  const callback = this.async();
-  this.cacheable && this.cacheable()
-  if(!callback) throw new Error("Sync mode not supported");
-
-  const compiler = getCompiler(source, this.resourcePath, this.query)
+function transpile(source, options) {
+  const compiler = getCompiler(source, options)
   const currentLoader = getCurrentLoader(this).path;
 
   compiler.$compile();
@@ -106,10 +106,9 @@ module.exports = function(source) {
 
   addRequires(compiler.$requires())
 
-  var currentContext = this.context
   compiler.$required_trees().forEach(function (dirname) {
     // path will only be relative to the file we're processing
-    let resolved = path.resolve(currentContext, dirname)
+    let resolved = path.resolve(options.filename, '..', dirname)
     // TODO: Look into making this async
     let files = fs.readdirSync(resolved)
     let withPath = []
@@ -118,11 +117,61 @@ module.exports = function(source) {
     addRequires(withPath)
   })
 
-  let combinedResult = prepend.join(" ") + "\n" + result
-  if (this.sourceMap) {
-    let map = processSourceMaps(compiler, source, this.resourcePath, result, prepend)
-    callback(null, combinedResult, map)
-  } else {
-    callback(null, combinedResult);
+  let response = {
+    code: prepend.join(" ") + "\n" + result
   }
+  if (options.sourceMap) {
+    response.map = processSourceMaps(compiler, source, options.filename, result, prepend)
+  }
+  return response
+}
+
+module.exports = function(source) {
+  var result = {}
+
+  console.log('got item')
+  const webpackRemainingChain = loaderUtils.getRemainingRequest(this).split('!');
+  const filename = webpackRemainingChain[webpackRemainingChain.length - 1];
+  console.log(`filename is ${filename}`)
+  const globalOptions = this.options.opal || {};
+  const loaderOptions = loaderUtils.parseQuery(this.query);
+  const userOptions = assign({}, globalOptions, loaderOptions);
+  const defaultOptions = {
+    sourceRoot: process.cwd(),
+    filename: filename,
+    cacheIdentifier: JSON.stringify({
+      'opal-loader': pkg.version,
+      'opal-compiler': opalVersion,
+      env: process.env.OPAL_ENV || process.env.NODE_ENV,
+    }),
+  }
+  const options = assign({}, defaultOptions, userOptions)
+
+  if (userOptions.sourceMap === undefined) {
+    options.sourceMap = this.sourceMap
+  }
+
+  const cacheDirectory = options.cacheDirectory
+  const cacheIdentifier = options.cacheIdentifier
+
+  delete options.cacheDirectory
+  delete options.cacheIdentifier
+
+  this.cacheable()
+
+  if (cacheDirectory) {
+    var callback = this.async();
+    return cache({
+      directory: cacheDirectory,
+      identifier: cacheIdentifier,
+      source: source,
+      options: options,
+      transform: transpile,
+    }, function(err, result) {
+      if (err) { return callback(err); }
+      return callback(null, result.code, result.map);
+    });
+  }
+  result = transpile(source, options);
+  this.callback(null, result.code, result.map);
 };

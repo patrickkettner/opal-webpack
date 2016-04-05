@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "description": "Opal Ruby module loader for webpack",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "lib"
+  ],
   "scripts": {
-    "start": "babel --watch index.es6.js --out-file index.js",
     "build_compiler": "bundle exec opal --no-exit -c compiler.rb | uglifyjs > vendor/opal-compiler.js",
     "test": "OPAL_LOAD_PATH=./test/fixtures mocha",
-    "prepare": "npm run build_compiler; babel index.es6.js --out-file index.js; npm test",
+    "prepare": "npm run build_compiler; npm test",
     "prepublish": "npm run prepare"
   },
   "author": "David Chang",
@@ -29,8 +32,6 @@
     "source-map": "^0.4.4"
   },
   "devDependencies": {
-    "babel-cli": "^6.0.0",
-    "babel-preset-es2015": "^6.6.0",
     "expect.js": "^0.3.1",
     "fs-extra": "^0.26.7",
     "mkdirp": "^0.5.1",
