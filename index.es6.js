@@ -106,7 +106,7 @@ module.exports = function(source) {
 
   addRequires(compiler.$requires())
 
-  var currentContext = this.context;
+  var currentContext = this.context
   compiler.$required_trees().forEach(function (dirname) {
     // path will only be relative to the file we're processing
     let resolved = path.resolve(currentContext, dirname)
