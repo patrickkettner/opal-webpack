@@ -12,7 +12,7 @@ const pkg = require('./package.json')
 //const cache = require('./lib/fs-cache.js')
 
 const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
-const LOAD_PATH = process.env.OPAL_LOAD_PATH ? process.env.OPAL_LOAD_PATH.split(":") : [];
+const LOAD_PATH = process.env.OPAL_LOAD_PATH ? process.env.OPAL_LOAD_PATH.split(":") : [process.cwd()];
 
 if (LOAD_PATH.length === 0) {
   console.warn("OPAL_LOAD_PATH environment variable is not set")
@@ -23,7 +23,7 @@ function getCurrentLoader(loaderContext) {
   return loaderContext.loaders[loaderContext.loaderIndex];
 }
 
-function resolveFilename(ourFilename, filename) {
+function resolveFilename(filename) {
   let rubyFileName = filename.replace(/(\.rb)?$/, ".rb");
 
   // FIXME
@@ -33,21 +33,15 @@ function resolveFilename(ourFilename, filename) {
   }
 
   let result = null;
-  if (rubyFileName.match(/^\./)) {
-    let currentDir = path.dirname(ourFilename)
-    let fullPath = path.resolve(currentDir, rubyFileName)
-    // Resolve in current directory
+  // opal only looks  @ the load path, so that's what we'll do
+  for (var dir of LOAD_PATH) {
+    let fullPath = path.resolve(dir, rubyFileName);
     if (fs.existsSync(fullPath)) {
-      result = fullPath;
-    }
-  } else {
-    // Resolve in LOAD_PATH
-    for (var dir of LOAD_PATH) {
-      let fullPath = path.resolve(dir, rubyFileName);
-      if (fs.existsSync(fullPath)) {
-        result = fullPath;
-        break;
+      result = {
+        absolute: fullPath,
+        relative: path.relative(dir, rubyFileName)
       }
+      break;
     }
   }
 
@@ -59,8 +53,15 @@ function resolveFilename(ourFilename, filename) {
 }
 
 function getCompiler(source, options) {
-  const compilerOptions = Object.assign({file: options.filename}, options);
-  // opal calls it file
+  // it's important to not give an absolute path to Opal (only relative to load path)
+  // otherwise absolute paths end up in the compiled code
+  const relativePath = resolveFilename(options.filename).relative
+  // don't want Opal.modules to have an extension
+  const withoutExtension = relativePath.replace(path.extname(relativePath), '')
+  const compilerOptions = Object.assign({
+    file: withoutExtension, // opal calls it file
+    requirable: true
+  }, options);
   delete compilerOptions.filename
   return Opal.Opal.Compiler.$new(source, Opal.hash(compilerOptions));
 }
@@ -99,12 +100,12 @@ function transpile(source, options) {
   const addRequires = files => {
     files.forEach(filename => {
       console.log(`handling require ${filename}`)
-      var resolved = resolveFilename(options.filename, filename);
+      var resolved = resolveFilename(filename).absolute;
       if (resolved.match(/\.js$/)) {
         prepend.push(`require('${require.resolve('imports-loader')}!${resolved}');`);
         prepend.push(`Opal.loaded('${filename}');`)
       } else {
-        prepend.push(`require('!!${options.currentLoader}?file=${filename}&requirable=true!${resolved}');`);
+        prepend.push(`require('!!${options.currentLoader}?file=${filename}!${resolved}');`);
       }
     })
   }

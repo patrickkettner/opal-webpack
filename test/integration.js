@@ -11,7 +11,12 @@ const webpack = require('webpack');
 const execSync = require('child_process').execSync;
 const fsExtra = require('fs-extra');
 
+RegExp.escape = function(s) {
+    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+
 describe('Opal loader', function(){
+  const currentDirectoryExp = new RegExp(RegExp.escape(process.cwd()))
   const dependencyMain = './test/fixtures/dependency.rb'
   const dependencyBackup = './test/fixtures/dependency.rb.backup'
   const opalLoader = path.resolve(__dirname, '../');
@@ -43,6 +48,8 @@ describe('Opal loader', function(){
 
           expect(err).to.be(null);
           expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
+          expect(subject).to.not.match(currentDirectoryExp)
+          expect(subject).to.match(/Opal\.modules\["dependency"\]/)
 
           return done();
         });
@@ -63,11 +70,86 @@ describe('Opal loader', function(){
     fsExtra.copy(dependencyBackup, dependencyMain, {clobber: true}, done)
   })
 
-  it("loads basic files", function (done) {
+  it.only("loads basic files", function (done) {
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/basic.js'
     });
     assertBasic(config, done)
+  });
+
+  it("loads requires", function (done){
+    const config = assign({}, globalConfig, {
+      entry: './test/fixtures/requires.js'
+    });
+    webpack(config, (err, stats) => {
+      expect(err).to.be(null);
+      expect(stats.compilation.errors).to.be.empty()
+
+      fs.readdir(outputDir, (err, files) => {
+        expect(err).to.be(null);
+        expect(files.length).to.equal(1);
+        fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
+          var subject = data.toString();
+
+          expect(err).to.be(null);
+          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
+          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'INSIDE', 789\)/);
+          expect(subject).to.not.match(currentDirectoryExp)
+
+          return done();
+        });
+      })
+    });
+  });
+
+  it("loads require_tree", function (done) {
+    const config = assign({}, globalConfig, {
+      entry: './test/fixtures/tree.js'
+    });
+    webpack(config, (err, stats) => {
+      expect(err).to.be(null);
+      expect(stats.compilation.errors).to.be.empty()
+
+      fs.readdir(outputDir, (err, files) => {
+        expect(err).to.be(null);
+        expect(files.length).to.equal(1);
+        fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
+          var subject = data.toString();
+
+          expect(err).to.be(null);
+          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
+          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'THERE', 456\)/);
+          expect(subject).to.not.match(currentDirectoryExp)
+
+          return done();
+        });
+      })
+    });
+  });
+
+  it("loads require_relative", function (done) {
+    const config = assign({}, globalConfig, {
+      entry: './test/fixtures/relative.js'
+    });
+    webpack(config, (err, stats) => {
+      expect(err).to.be(null);
+      expect(stats.compilation.errors).to.be.empty()
+
+      fs.readdir(outputDir, (err, files) => {
+        expect(err).to.be(null);
+        expect(files.length).to.equal(1);
+        fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
+          var subject = data.toString();
+
+          expect(err).to.be(null);
+          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
+          // don't want paths hard coded to machines in here
+          expect(subject).to.not.match(currentDirectoryExp)
+
+          return done();
+        });
+      })
+    });
   });
 
   it("reloads dependencies", function (done) {
@@ -96,77 +178,6 @@ describe('Opal loader', function(){
     });
   });
 
-  it("loads requires", function (done){
-    const config = assign({}, globalConfig, {
-      entry: './test/fixtures/requires.js'
-    });
-    webpack(config, (err, stats) => {
-      expect(err).to.be(null);
-      expect(stats.compilation.errors).to.be.empty()
-
-      fs.readdir(outputDir, (err, files) => {
-        expect(err).to.be(null);
-        expect(files.length).to.equal(1);
-        fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
-          var subject = data.toString();
-
-          expect(err).to.be(null);
-          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
-          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'INSIDE', 789\)/);
-
-          return done();
-        });
-      })
-    });
-  });
-
-  it("loads require_tree", function (done) {
-    const config = assign({}, globalConfig, {
-      entry: './test/fixtures/tree.js'
-    });
-    webpack(config, (err, stats) => {
-      expect(err).to.be(null);
-      expect(stats.compilation.errors).to.be.empty()
-
-      fs.readdir(outputDir, (err, files) => {
-        expect(err).to.be(null);
-        expect(files.length).to.equal(1);
-        fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
-          var subject = data.toString();
-
-          expect(err).to.be(null);
-          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
-          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'THERE', 456\)/);
-
-          return done();
-        });
-      })
-    });
-  });
-
-  it("loads require_relative", function (done) {
-    const config = assign({}, globalConfig, {
-      entry: './test/fixtures/relative.js'
-    });
-    webpack(config, (err, stats) => {
-      expect(err).to.be(null);
-      expect(stats.compilation.errors).to.be.empty()
-
-      fs.readdir(outputDir, (err, files) => {
-        expect(err).to.be(null);
-        expect(files.length).to.equal(1);
-        fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
-          var subject = data.toString();
-
-          expect(err).to.be(null);
-          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
-
-          return done();
-        });
-      })
-    });
-  });
-
   it("outputs correct source maps", function (done) {
     this.timeout(10000);
     execSync("bundle exec opal -c -e \"require 'opal'\" > test/output/loader/opal.js");
@@ -190,6 +201,10 @@ describe('Opal loader', function(){
         return done();
       })
     });
+  });
+
+  xit("handles a file not found error", function (done) {
+
   });
 
   it("handles errors", function (done) {
