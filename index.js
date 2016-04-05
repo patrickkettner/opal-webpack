@@ -23,7 +23,7 @@ function getCurrentLoader(loaderContext) {
   return loaderContext.loaders[loaderContext.loaderIndex];
 }
 
-function resolveFilename(filename) {
+function resolveFilename(ourFilename, filename) {
   let rubyFileName = filename.replace(/(\.rb)?$/, ".rb");
 
   // FIXME
@@ -34,9 +34,11 @@ function resolveFilename(filename) {
 
   let result = null;
   if (rubyFileName.match(/^\./)) {
+    let currentDir = path.dirname(ourFilename)
+    let fullPath = path.resolve(currentDir, rubyFileName)
     // Resolve in current directory
-    if (fs.existsSync(rubyFileName)) {
-      result = rubyFileName;
+    if (fs.existsSync(fullPath)) {
+      result = fullPath;
     }
   } else {
     // Resolve in LOAD_PATH
@@ -57,7 +59,7 @@ function resolveFilename(filename) {
 }
 
 function getCompiler(source, options) {
-  const compilerOptions = Object.assign({file: options.file}, options);
+  const compilerOptions = Object.assign({file: options.filename}, options);
   // opal calls it file
   delete compilerOptions.filename
   return Opal.Opal.Compiler.$new(source, Opal.hash(compilerOptions));
@@ -96,7 +98,8 @@ function transpile(source, options) {
 
   const addRequires = files => {
     files.forEach(filename => {
-      var resolved = resolveFilename(filename);
+      console.log(`handling require ${filename}`)
+      var resolved = resolveFilename(options.filename, filename);
       if (resolved.match(/\.js$/)) {
         prepend.push(`require('${require.resolve('imports-loader')}!${resolved}');`);
         prepend.push(`Opal.loaded('${filename}');`)
