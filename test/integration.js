@@ -181,8 +181,18 @@ describe('Opal loader', function(){
     });
   });
 
-  xit("handles errors correctly", function (done) {
-
+  it("handles errors correctly", function (done) {
+    const config = assign({}, globalConfig, {
+      entry: './test/fixtures/error.js'
+    });
+    webpack(config, (err, stats) => {
+      let errors = stats.compilation.errors
+      expect(errors.length).to.be(1)
+      let error = errors[0]
+      expect(error).to.be.an(Error)
+      expect(error.message).to.match(/Module build failed.*An error occurred while compiling:.*error\.rb[\s\S]+3:0/)
+      return done()
+    });
   });
 
   it("allows caching to a specific directory", function (done) {
