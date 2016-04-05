@@ -26,6 +26,25 @@ describe('Opal loader', function(){
       },
     };
 
+  function assertBasic(config, done) {
+    webpack(config, (err, stats) => {
+      expect(err).to.be(null);
+
+      fs.readdir(outputDir, (err, files) => {
+        expect(err).to.be(null);
+        expect(files.length).to.equal(1);
+        fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
+          var subject = data.toString();
+
+          expect(err).to.be(null);
+          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
+
+          return done();
+        });
+      })
+    });
+  }
+
   beforeEach(done => {
     fsExtra.copySync(dependencyMain, dependencyBackup, {clobber: true})
     rimraf(outputDir, function(err) {
@@ -43,22 +62,7 @@ describe('Opal loader', function(){
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/basic.js'
     });
-    webpack(config, (err, stats) => {
-      expect(err).to.be(null);
-
-      fs.readdir(outputDir, (err, files) => {
-        expect(err).to.be(null);
-        expect(files.length).to.equal(1);
-        fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
-          var subject = data.toString();
-
-          expect(err).to.be(null);
-          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
-
-          return done();
-        });
-      })
-    });
+    assertBasic(config, done)
   });
 
   it("reloads dependencies properly", function (done) {
@@ -175,5 +179,46 @@ describe('Opal loader', function(){
         return done();
       })
     });
+  });
+
+  xit("handles errors correctly", function (done) {
+
+  });
+
+  it("allows caching to a specific directory", function (done) {
+    const cacheDir = 'test/output/cache'
+    const config = assign({}, globalConfig, {
+      entry: './test/fixtures/basic.js',
+      module: {
+        loaders: [
+          {
+            test: /\.rb$/,
+            loader: opalLoader,
+            query: {
+              cacheDirectory: cacheDir
+            }
+          }
+        ],
+      },
+    });
+    assertBasic(config, () => {
+      assertBasic(config, () => {
+        fs.readdir(cacheDir, (err, files) => {
+          expect(err).to.be(null);
+          expect(files).to.have.length(3);
+          return done();
+        })
+      })
+    })
+  });
+
+  xit("expires the cache properly", function (done) {
+
+  });
+
+  xit("allows caching with a custom identifier", function (done) {
+  });
+
+  xit("allows caching with a default directory", function (done) {
   });
 });
