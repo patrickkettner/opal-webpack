@@ -1,10 +1,14 @@
-require("./vendor/opal-compiler.js")
+'use strict';
 
-import process from "process"
-import loaderUtils from "loader-utils"
-import { SourceNode, SourceMapConsumer, SourceMapGenerator } from 'source-map'
-import path from "path"
-import fs from "fs";
+require("./vendor/opal-compiler.js")
+const loaderUtils = require('loader-utils')
+const sourceMap = require('source-map')
+const SourceNode = sourceMap.SourceNode
+const SourceMapConsumer = sourceMap.SourceMapConsumer
+const SourceMapGenerator = sourceMap.SourceMapGenerator
+const path = require('path')
+const fs = require('fs')
+const pkg = require('./package.json')
 //const cache = require('./lib/fs-cache.js')
 
 const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
@@ -19,7 +23,7 @@ function getCurrentLoader(loaderContext) {
   return loaderContext.loaders[loaderContext.loaderIndex];
 }
 
-function resolveFilename(loaderContext, filename) {
+function resolveFilename(filename) {
   let rubyFileName = filename.replace(/(\.rb)?$/, ".rb");
 
   // FIXME
@@ -31,9 +35,8 @@ function resolveFilename(loaderContext, filename) {
   let result = null;
   if (rubyFileName.match(/^\./)) {
     // Resolve in current directory
-    let fullPath = path.resolve(loaderContext.context, rubyFileName);
-    if (fs.existsSync(fullPath)) {
-      result = fullPath;
+    if (fs.existsSync(rubyFileName)) {
+      result = rubyFileName;
     }
   } else {
     // Resolve in LOAD_PATH
@@ -79,7 +82,6 @@ function processSourceMaps(compiler, source, resourcePath, rawResult, prepend) {
 
 function transpile(source, options) {
   const compiler = getCompiler(source, options)
-  const currentLoader = getCurrentLoader(this).path;
 
   compiler.$compile();
 
@@ -94,12 +96,12 @@ function transpile(source, options) {
 
   const addRequires = files => {
     files.forEach(filename => {
-      var resolved = resolveFilename(this, filename);
+      var resolved = resolveFilename(filename);
       if (resolved.match(/\.js$/)) {
         prepend.push(`require('${require.resolve('imports-loader')}!${resolved}');`);
         prepend.push(`Opal.loaded('${filename}');`)
       } else {
-        prepend.push(`require('!!${currentLoader}?file=${filename}&requirable=true!${resolved}');`);
+        prepend.push(`require('!!${options.currentLoader}?file=${filename}&requirable=true!${resolved}');`);
       }
     })
   }
@@ -129,15 +131,15 @@ function transpile(source, options) {
 module.exports = function(source) {
   var result = {}
 
-  console.log('got item')
   const webpackRemainingChain = loaderUtils.getRemainingRequest(this).split('!');
   const filename = webpackRemainingChain[webpackRemainingChain.length - 1];
   console.log(`filename is ${filename}`)
   const globalOptions = this.options.opal || {};
   const loaderOptions = loaderUtils.parseQuery(this.query);
-  const userOptions = assign({}, globalOptions, loaderOptions);
+  const userOptions = Object.assign({}, globalOptions, loaderOptions);
   const defaultOptions = {
     sourceRoot: process.cwd(),
+    currentLoader: getCurrentLoader(this).path,
     filename: filename,
     cacheIdentifier: JSON.stringify({
       'opal-loader': pkg.version,
@@ -145,7 +147,7 @@ module.exports = function(source) {
       env: process.env.OPAL_ENV || process.env.NODE_ENV,
     }),
   }
-  const options = assign({}, defaultOptions, userOptions)
+  const options = Object.assign({}, defaultOptions, userOptions)
 
   if (userOptions.sourceMap === undefined) {
     options.sourceMap = this.sourceMap

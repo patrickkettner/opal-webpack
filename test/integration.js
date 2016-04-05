@@ -50,7 +50,7 @@ describe('Opal loader', function(){
     });
   }
 
-  beforeEach(done => {
+  beforeEach(function (done) {
     fsExtra.copySync(dependencyMain, dependencyBackup, {clobber: true})
     rimraf(outputDir, function(err) {
       if (err) { return done(err); }
@@ -58,12 +58,12 @@ describe('Opal loader', function(){
     });
   });
 
-  afterEach(done => {
+  afterEach(function (done) {
     // cleanup
     fsExtra.copy(dependencyBackup, dependencyMain, {clobber: true}, done)
   })
 
-  it.only("loads correctly", done => {
+  it("loads correctly", function (done) {
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/basic.js'
     });
@@ -96,7 +96,7 @@ describe('Opal loader', function(){
     });
   });
 
-  it("loads requires correctly", done =>{
+  it("loads requires correctly", function (done){
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/requires.js'
     });
@@ -119,7 +119,7 @@ describe('Opal loader', function(){
     });
   });
 
-  it("loads require_tree", done => {
+  it("loads require_tree", function (done) {
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/tree.js'
     });
@@ -143,7 +143,7 @@ describe('Opal loader', function(){
     });
   });
 
-  it("loads require_relative", done => {
+  it("loads require_relative", function (done) {
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/relative.js'
     });
