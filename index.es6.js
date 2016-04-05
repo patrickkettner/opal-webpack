@@ -51,15 +51,35 @@ function resolveFilename(loaderContext, filename) {
   }
 }
 
+function getCompiler(source, resourcePath, query) {
+  const compilerOptions = Object.assign({file: resourcePath}, loaderUtils.parseQuery(query));
+  return Opal.Opal.Compiler.$new(source, Opal.hash(compilerOptions));
+}
+
+function processSourceMaps(compiler, source, resourcePath, rawResult, prepend) {
+  let rawMap = JSON.parse(compiler.$source_map().$as_json().$to_json());
+
+  // Since it's compiled from the current resource
+  rawMap.sources = [resourcePath];
+
+  // Set source content
+  let consumer = new SourceMapConsumer(rawMap)
+  let map = SourceMapGenerator.fromSourceMap(consumer);
+  map.setSourceContent(resourcePath, source);
+
+  // Prepend the chunk of our injected script
+  let node = SourceNode.fromStringWithSourceMap(rawResult, new SourceMapConsumer(map.toString()));
+  node.prepend(prepend.join(" "));
+  return JSON.parse(node.toStringWithSourceMap().map.toString())
+}
+
 module.exports = function(source) {
   const callback = this.async();
+  this.cacheable && this.cacheable()
   if(!callback) throw new Error("Sync mode not supported");
 
-  const compilerOptions = Object.assign({file: this.resourcePath}, loaderUtils.parseQuery(this.query));
-  const compiler = Opal.Opal.Compiler.$new(source, Opal.hash(compilerOptions));
+  const compiler = getCompiler(source, this.resourcePath, this.query)
   const currentLoader = getCurrentLoader(this).path;
-
-  this.cacheable && this.cacheable()
 
   compiler.$compile();
 
@@ -98,24 +118,10 @@ module.exports = function(source) {
     addRequires(withPath)
   })
 
-  let combinedResult = prepend.join(" ") + "\n" + result;
-
+  let combinedResult = prepend.join(" ") + "\n" + result
   if (this.sourceMap) {
-    let rawMap = JSON.parse(compiler.$source_map().$as_json().$to_json());
-
-    // Since it's compiled from the current resource
-    rawMap.sources = [this.resourcePath];
-
-    // Set source content
-    let consumer = new SourceMapConsumer(rawMap)
-    let map = SourceMapGenerator.fromSourceMap(consumer);
-    map.setSourceContent(this.resourcePath, source);
-
-    // Prepend the chunk of our injected script
-    let node = SourceNode.fromStringWithSourceMap(result, new SourceMapConsumer(map.toString()));
-    node.prepend(prepend.join(" "));
-
-    callback(null, combinedResult, JSON.parse(node.toStringWithSourceMap().map.toString()));
+    let map = processSourceMaps(compiler, source, this.resourcePath, result, prepend)
+    callback(null, combinedResult, map)
   } else {
     callback(null, combinedResult);
   }
