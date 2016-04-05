@@ -63,14 +63,14 @@ describe('Opal loader', function(){
     fsExtra.copy(dependencyBackup, dependencyMain, {clobber: true}, done)
   })
 
-  it("loads correctly", function (done) {
+  it("loads basic files", function (done) {
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/basic.js'
     });
     assertBasic(config, done)
   });
 
-  it("reloads dependencies properly", function (done) {
+  it("reloads dependencies", function (done) {
     this.timeout(6000)
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/requires.js'
@@ -96,7 +96,7 @@ describe('Opal loader', function(){
     });
   });
 
-  it("loads requires correctly", function (done){
+  it("loads requires", function (done){
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/requires.js'
     });
@@ -192,7 +192,7 @@ describe('Opal loader', function(){
     });
   });
 
-  it("handles errors correctly", function (done) {
+  it("handles errors", function (done) {
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/error.js'
     });
