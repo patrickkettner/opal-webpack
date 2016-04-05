@@ -130,6 +130,10 @@ describe('Opal loader', function(){
     });
   });
 
+  xit("loads require_tree without leading dot", function (done) {
+
+  });
+
   it("loads require_relative", function (done) {
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/relative.js'
