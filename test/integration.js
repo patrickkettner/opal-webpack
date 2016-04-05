@@ -77,7 +77,7 @@ describe('Opal loader', function(){
     assertBasic(config, done)
   });
 
-  it.only("loads requires", function (done){
+  it("loads requires", function (done){
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/requires.js'
     });
@@ -102,7 +102,7 @@ describe('Opal loader', function(){
     });
   });
 
-  it("loads require_tree", function (done) {
+  it.only("loads require_tree", function (done) {
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/tree.js'
     });
@@ -120,6 +120,7 @@ describe('Opal loader', function(){
           expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
           expect(subject).to.match(/Opal\.cdecl\(\$scope, 'THERE', 456\)/);
           expect(subject).to.not.match(currentDirectoryExp)
+          expect(subject).to.match(/\$require_tree\("tree"\)/)
           expect(subject).to.match(/Opal\.modules\["tree\/file1"\]/)
           expect(subject).to.match(/Opal\.modules\["tree\/file2"\]/)
 
