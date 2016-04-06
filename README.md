@@ -65,11 +65,6 @@ See the example [Rakefile](https://github.com/zetachang/opalrb-loader/blob/maste
 
 ### Known issues
 * First time compiling is relatively slow compared to Ruby one, use `--watch` option for webpack to speed up dev iteration.
-* Use `require` to load JS file is broken, but you can write as below to load JS module (webpack will correctly resolve it).
-```ruby
-# Inside ruby file
-`var $ = require("jquery")`
-```
 * **stdlib** and some gems may not be correctly compiled, please file an issue if you encounter one.
 
 ### Examples
