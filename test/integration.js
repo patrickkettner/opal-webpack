@@ -111,6 +111,30 @@ describe('Opal loader', function(){
     });
   });
 
+  it("loads JS requires", function (done) {
+    const config = assign({}, globalConfig, {
+      entry: './test/fixtures/js_require.js'
+    });
+    webpack(config, (err, stats) => {
+      expect(err).to.be(null);
+      expect(stats.compilation.errors).to.be.empty()
+
+      fs.readdir(outputDir, (err, files) => {
+        expect(err).to.be(null);
+        expect(files.length).to.equal(1);
+        fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
+          var subject = data.toString();
+
+          expect(err).to.be(null);
+          expect(subject).to.not.match(currentDirectoryExp)
+          expect(runCode()).to.be("howdy\nagain\n")
+
+          return done();
+        });
+      })
+    });
+  })
+
   // TODO: Several opal bugs with File.dirname and Path.join that keep this from working
   xit("loads require_tree", function (done) {
     const config = assign({}, globalConfig, {

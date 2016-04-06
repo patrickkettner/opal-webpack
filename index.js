@@ -24,25 +24,35 @@ function getCurrentLoader(loaderContext) {
   return loaderContext.loaders[loaderContext.loaderIndex]
 }
 
-function resolveFilename(filename) {
-  let rubyFileName = filename.replace(/(\.rb)?$/, '.rb')
+function checkPath(filename) {
+  // opal only looks  @ the load path, so that's what we'll do
+  for (var dir of LOAD_PATH) {
+    let fullPath = path.resolve(dir, filename)
+    if (fs.existsSync(fullPath)) {
+      return {
+        absolute: fullPath,
+        relative: path.relative(dir, filename)
+      }
+    }
+  }
+  return null
+}
 
+function resolveFilename(filename) {
   // FIXME
   // Workaround to make "require 'opal'" work, original opal will try to concate raw js
   if (filename == 'corelib/runtime') {
-    rubyFileName = 'corelib/runtime.js'
+    filename = 'corelib/runtime.js'
   }
 
   let result = null
-    // opal only looks  @ the load path, so that's what we'll do
-  for (var dir of LOAD_PATH) {
-    let fullPath = path.resolve(dir, rubyFileName)
-    if (fs.existsSync(fullPath)) {
-      result = {
-        absolute: fullPath,
-        relative: path.relative(dir, rubyFileName)
-      }
-      break
+  if (path.extname(filename) !== '') {
+    result = checkPath(filename)
+  }
+  else {
+    result = checkPath(filename + '.rb')
+    if (!result) {
+      result = checkPath(filename + '.js')
     }
   }
 
