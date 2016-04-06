@@ -102,6 +102,7 @@ describe('Opal loader', function(){
           expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
           expect(subject).to.match(/Opal\.cdecl\(\$scope, 'INSIDE', 789\)/);
           expect(subject).to.not.match(currentDirectoryExp)
+          expect(runCode()).to.be("123\nwe made it\n")
 
           return done();
         });
@@ -131,6 +132,7 @@ describe('Opal loader', function(){
           expect(subject).to.match(/\$require_tree\("tree"\)/)
           expect(subject).to.match(/Opal\.modules\["tree\/file1"\]/)
           expect(subject).to.match(/Opal\.modules\["tree\/file2"\]/)
+          expect(runCode()).to.be("inside the tree\n")
 
           return done();
         });
@@ -160,6 +162,7 @@ describe('Opal loader', function(){
           expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
           // don't want paths hard coded to machines in here
           expect(subject).to.not.match(currentDirectoryExp)
+          expect(runCode()).to.be("inside the tree\n")
 
           return done();
         });
@@ -175,7 +178,7 @@ describe('Opal loader', function(){
     webpack(config, (err, stats) => {
       expect(err).to.be(null)
       expect(stats.compilation.errors).to.be.empty()
-      fs.writeFileSync(dependencyMain, 'HELLO=456')
+      fs.writeFileSync(dependencyMain, 'puts HELLO=456')
       setTimeout(() => {
         fs.readdir(outputDir, (err, files) => {
           expect(err).to.be(null);
@@ -184,7 +187,8 @@ describe('Opal loader', function(){
             var subject = data.toString();
 
             expect(err).to.be(null);
-            expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
+            expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 456\)/);
+            expect(runCode()).to.be("456\n")
 
             return done();
           })
