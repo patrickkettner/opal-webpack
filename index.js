@@ -104,6 +104,7 @@ function filterNonQueryPassOptions(options) {
   delete passOnOptions.filename
   delete passOnOptions.sourceMap
   delete passOnOptions.relativeFileName
+  delete passOnOptions.stubs
   return passOnOptions
 }
 

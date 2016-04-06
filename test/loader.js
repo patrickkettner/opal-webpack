@@ -64,6 +64,21 @@ describe('Opal loader', function(){
     callLoader(callback, 'require "stubbed"; HELLO=123', null, options)
   })
 
+  it('does not pass stubs on via query', function(done) {
+    const callback = function (err, result) {
+      expect(result).to.not.match(/require\('!!undefined.*?stubs.*'\);/)
+      done()
+    }
+
+    const options = {
+      opal: {
+        stubs: ['stubbed']
+      }
+    }
+
+    callLoader(callback, 'require "another_dependency"', null, options)
+  })
+
   it('obeys requireable', function(done) {
     const callback = function (err, result) {
       expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
