@@ -62,7 +62,6 @@ function getCompiler(source, options) {
   console.log(`compiler, got ${withoutExtension}`)
   const compilerOptions = Object.assign({
     file: withoutExtension, // opal calls it file
-    requirable: true
   }, options);
   delete compilerOptions.filename
   return Opal.Opal.Compiler.$new(source, Opal.hash(compilerOptions));
@@ -107,7 +106,7 @@ function transpile(source, options) {
         prepend.push(`require('${require.resolve('imports-loader')}!${resolved}');`);
         prepend.push(`Opal.loaded('${filename}');`)
       } else {
-        prepend.push(`require('!!${options.currentLoader}?file=${filename}!${resolved}');`);
+        prepend.push(`require('!!${options.currentLoader}?file=${filename}&requirable=true!${resolved}');`);
       }
     })
   }

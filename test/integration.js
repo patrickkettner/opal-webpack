@@ -49,7 +49,6 @@ describe('Opal loader', function(){
           expect(err).to.be(null);
           expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(subject).to.match(/Opal\.modules\["dependency"\]/)
 
           return done();
         });
@@ -224,7 +223,7 @@ describe('Opal loader', function(){
       expect(errors.length).to.be(1)
       let error = errors[0]
       expect(error).to.be.an(Error)
-      expect(error.message).to.match(/Module build failed.*An error occurred while compiling:.*error\.rb[\s\S]+3:0/)
+      expect(error.message).to.match(/Module build failed.*An error occurred while compiling:.*error[\s\S]+3:0/)
       return done()
     });
   });
