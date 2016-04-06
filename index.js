@@ -57,9 +57,7 @@ function getCompiler(source, options) {
   // otherwise absolute paths end up in the compiled code
   const relativePath = options.relativeFileName
   // don't want Opal.modules to have an extension
-  console.log(`compiler, trying to trim ${path.extname(relativePath)} off ${relativePath}`)
   const withoutExtension = relativePath.replace(path.extname(relativePath), '')
-  console.log(`compiler, got ${withoutExtension}`)
   const compilerOptions = Object.assign({
     file: withoutExtension, // opal calls it file
   }, options);
@@ -100,7 +98,6 @@ function transpile(source, options) {
 
   const addRequires = files => {
     files.forEach(filename => {
-      console.log(`handling require ${filename}`)
       var resolved = resolveFilename(filename).absolute;
       if (resolved.match(/\.js$/)) {
         prepend.push(`require('${require.resolve('imports-loader')}!${resolved}');`);
@@ -116,7 +113,6 @@ function transpile(source, options) {
   compiler.$required_trees().forEach(function (dirname) {
     // path will only be relative to the file we're processing
     let resolved = path.resolve(options.filename, '..', dirname)
-    console.log(`require trees from ${dirname} to ${resolved}`)
     // TODO: Look into making this async
     let files = fs.readdirSync(resolved)
     let withPath = []
