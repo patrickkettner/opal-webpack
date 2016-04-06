@@ -1,6 +1,10 @@
 'use strict'
 
-require('./vendor/opal-compiler.js')
+// allow watch unit testing more easily
+if (typeof Opal === 'undefined') {
+  require('./vendor/opal-compiler.js')
+}
+
 const loaderUtils = require('loader-utils')
 const sourceMap = require('source-map')
 const SourceNode = sourceMap.SourceNode
