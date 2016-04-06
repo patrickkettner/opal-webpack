@@ -171,34 +171,6 @@ describe('Opal loader', function(){
     });
   });
 
-  it("reloads dependencies", function (done) {
-    this.timeout(6000)
-    const config = assign({}, globalConfig, {
-      entry: './test/fixtures/requires.js',
-      watch: true
-    });
-    webpack(config, (err, stats) => {
-      expect(err).to.be(null)
-      expect(stats.compilation.errors).to.be.empty()
-      fs.writeFileSync(dependencyMain, 'puts HELLO=456')
-      setTimeout(() => {
-        fs.readdir(outputDir, (err, files) => {
-          expect(err).to.be(null);
-          expect(files.length).to.equal(1);
-          fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
-            var subject = data.toString();
-
-            expect(err).to.be(null);
-            expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 456\)/);
-            expect(runCode()).to.be("456\nwe made it\n")
-
-            return done();
-          })
-        })
-      }, 3000)
-    });
-  });
-
   it("outputs correct source maps", function (done) {
     this.timeout(10000);
 
