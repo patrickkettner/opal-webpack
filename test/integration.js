@@ -134,8 +134,6 @@ describe('integration', function(){
     })
   })
 
-  xit('load path / webpack module dir')
-
   // TODO: Several opal bugs with File.dirname and Path.join that keep this from working
   xit('loads require_tree', function (done) {
     const config = assign({}, globalConfig, {
