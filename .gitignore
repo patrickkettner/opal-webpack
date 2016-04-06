@@ -39,3 +39,4 @@ vendor/opal-compiler.js
 # test files
 test/output
 test/fixtures/*.backup
+/tmp

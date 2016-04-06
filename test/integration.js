@@ -56,6 +56,12 @@ describe('Opal loader', function(){
     });
   }
 
+  function runCode(otherArgs) {
+    fsExtra.mkdirpSync('./tmp')
+    execSync("ls ./tmp/opal.js || bundle exec opal -c -e \"require 'opal'\" > ./tmp/opal.js");
+    return execSync(`node -r ./tmp/opal.js ${otherArgs} ./test/output/loader/0.loader.js 2>&1 || true`).toString()
+  }
+
   beforeEach(function (done) {
     fsExtra.copySync(dependencyMain, dependencyBackup, {clobber: true})
     rimraf(outputDir, function(err) {
@@ -187,7 +193,6 @@ describe('Opal loader', function(){
 
   it("outputs correct source maps", function (done) {
     this.timeout(10000);
-    execSync("bundle exec opal -c -e \"require 'opal'\" > test/output/loader/opal.js");
 
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/source_maps.js',
@@ -199,8 +204,8 @@ describe('Opal loader', function(){
 
       fs.readdir(outputDir, (err, files) => {
         expect(err).to.be(null);
-        expect(files.length).to.equal(3);
-        var output = execSync("node -r ./test/output/loader/opal.js -r ./test/fixtures/load_source_maps.js ./test/output/loader/0.loader.js 2>&1 || true").toString()
+        expect(files.length).to.equal(2);
+        var output = runCode('-r ./test/fixtures/load_source_maps.js')
         // ruby output, might need some more work since we're 1 line off
         // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
         expect(output).to.match(/test\/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
