@@ -24,6 +24,12 @@ module SourceMap
   end
 end
 
+# Opal issues:
+# 1. dirname doesn't work right for File.dirname('stuff'). none of the specs are turned on
+# 2. Pathname.join doesn't work right
+# bundle exec opal -e "require 'pathname'; puts Pathname('.').join('./tree')" returns '././tree'
+# ruby -e "require 'pathname'; puts Pathname('.').join('./tree')" returns 'tree'
+# 3. Pathname.cleanpath not working (see below)
 # Backports from opal 0.10
 unless Pathname.method_defined?(:+) && Pathname.method_defined?(:join)
   class Pathname
@@ -47,10 +53,29 @@ unless Pathname.method_defined?(:+) && Pathname.method_defined?(:join)
   end
 end
 
-# FIXME
-# Pending upstream issue https://github.com/opal/opal/issues/1400
-class Pathname
-  def cleanpath
-    `return #@path`
+# Fixed in Opal 0.10
+if `Opal.normalize === undefined`
+  class Pathname
+    def cleanpath
+      %x{
+        var path = #@path;
+        var parts, part, new_parts = [], SEPARATOR = '/';
+
+        if (Opal.current_dir !== '.') {
+          path = Opal.current_dir.replace(/\/*$/, '/') + path;
+        }
+
+        path = path.replace(/\.(rb|opal|js)$/, '');
+        parts = path.split(SEPARATOR);
+
+        for (var i = 0, ii = parts.length; i < ii; i++) {
+          part = parts[i];
+          if (part === '') continue;
+          (part === '..') ? new_parts.pop() : new_parts.push(part)
+        }
+
+        return new_parts.join(SEPARATOR);
+      }
+    end
   end
 end

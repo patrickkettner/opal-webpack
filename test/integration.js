@@ -162,6 +162,7 @@ describe('Opal loader', function(){
           expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
           // don't want paths hard coded to machines in here
           expect(subject).to.not.match(currentDirectoryExp)
+          expect(subject).to.match(/Opal\.modules\["tree\/file1"\]/)
           expect(runCode()).to.be("inside the tree\n")
 
           return done();
