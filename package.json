@@ -12,7 +12,7 @@
     "test": "OPAL_LOAD_PATH=./test/fixtures:./test/fixtures/load_path mocha",
     "prepare": "npm run build_compiler; npm test",
     "prepublish": "npm run prepare",
-    "eslint": "eslint index.js test"
+    "eslint": "eslint index.js test --ignore-pattern test/output"
   },
   "author": "David Chang",
   "keywords": [

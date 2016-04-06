@@ -20,7 +20,13 @@ module.exports = {
         "node": true
     },
     "globals": {
-        "Opal": true
+        "Opal": true,
+        "describe": true,
+        "it": true,
+        "beforeEach": true,
+        "afterEach": true,
+        "xit": true,
+        "done": true
     },
     "extends": "eslint:recommended"
 };
