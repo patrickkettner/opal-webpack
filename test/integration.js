@@ -196,10 +196,6 @@ describe('Opal loader', function(){
     });
   });
 
-  xit("handles a file not found error", function (done) {
-
-  });
-
   it("handles errors", function (done) {
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/error.js'
@@ -303,13 +299,4 @@ describe('Opal loader', function(){
       })
     });
   })
-
-  xit("expires the cache properly", function (done) {
-  });
-
-  xit("allows caching with a custom identifier", function (done) {
-  });
-
-  xit("allows caching with a default directory", function (done) {
-  });
 });
