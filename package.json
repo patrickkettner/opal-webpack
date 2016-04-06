@@ -5,7 +5,8 @@
   "main": "index.js",
   "files": [
     "index.js",
-    "lib"
+    "lib",
+    "vendor"
   ],
   "scripts": {
     "build_compiler": "bundle exec opal --no-exit -c compiler.rb | uglifyjs > vendor/opal-compiler.js",
