@@ -9,7 +9,7 @@ const SourceMapGenerator = sourceMap.SourceMapGenerator
 const path = require('path')
 const fs = require('fs')
 const pkg = require('./package.json')
-//const cache = require('./lib/fs-cache.js')
+const cache = require('./lib/fs-cache.js')
 
 const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
 const LOAD_PATH = process.env.OPAL_LOAD_PATH ? process.env.OPAL_LOAD_PATH.split(":") : [process.cwd()];

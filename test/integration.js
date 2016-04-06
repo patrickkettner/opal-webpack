@@ -20,7 +20,8 @@ describe('Opal loader', function(){
   const dependencyMain = './test/fixtures/dependency.rb'
   const dependencyBackup = './test/fixtures/dependency.rb.backup'
   const opalLoader = path.resolve(__dirname, '../');
-  const outputDir = path.resolve(__dirname, './output/loader');
+  const outputBaseDir = path.resolve(__dirname, 'output');
+  const outputDir = path.resolve(outputBaseDir, 'loader');
   const globalConfig = {
       output: {
         path: outputDir,
@@ -66,7 +67,7 @@ describe('Opal loader', function(){
 
   beforeEach(function (done) {
     fsExtra.copySync(dependencyMain, dependencyBackup, {clobber: true})
-    rimraf(outputDir, function(err) {
+    rimraf(outputBaseDir, function(err) {
       if (err) { return done(err); }
       mkdirp(outputDir, done);
     });
@@ -213,7 +214,7 @@ describe('Opal loader', function(){
     });
   });
 
-  xit("allows caching to a specific directory", function (done) {
+  it("allows caching to a specific directory", function (done) {
     const cacheDir = 'test/output/cache'
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/basic.js',
@@ -234,7 +235,7 @@ describe('Opal loader', function(){
       assertBasic(config, () => {
         fs.readdir(cacheDir, (err, files) => {
           expect(err).to.be(null);
-          expect(files).to.have.length(3);
+          expect(files).to.have.length(1);
           return done();
         })
       })
