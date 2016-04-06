@@ -14,7 +14,7 @@ RegExp.escape = function(s) {
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
 }
 
-describe('Opal loader', function(){
+describe('integration', function(){
   const currentDirectoryExp = new RegExp(RegExp.escape(process.cwd()))
   const dependencyMain = './test/fixtures/dependency.rb'
   const dependencyBackup = './test/fixtures/dependency.rb.backup'

@@ -20,11 +20,3 @@ describe('Opal compiler', function(){
     assert.equal(result.length > 0, true)
   })
 })
-
-describe('Opal loader', function(){
-  xit('runs via unit tests (TODO)', function(){
-    var loader = require('../index')
-
-    assert.equal(typeof loader, 'function')
-  })
-})
