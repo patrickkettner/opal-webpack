@@ -1,6 +1,7 @@
 MASTER:
 
 * File caching between runs
+* Supports passing stubs in via global options
 * Avoid absolute path in opal module names (e.g. `Opal.modules['/root/something']`)
 * Use opal semantics when dealing with requires (no `require('./something') anymore`)
 * Make load path more explicit to behave more like Opal does (either load path is current directory and everything must be in there or the load path must be defined)
