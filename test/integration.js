@@ -242,6 +242,36 @@ describe('Opal loader', function(){
     })
   });
 
+  it.only("caches multiple modules", function(done) {
+    const cacheDir = 'test/output/cache'
+    const config = assign({}, globalConfig, {
+      entry: './test/fixtures/requires.js',
+      module: {
+        loaders: [
+          {
+            test: /\.rb$/,
+            loader: opalLoader,
+            query: {
+              cacheDirectory: cacheDir
+            }
+          }
+        ],
+      },
+    });
+    webpack(config, (err, stats) => {
+      expect(err).to.be(null);
+      expect(stats.compilation.errors).to.be.empty()
+
+      fs.readdir(cacheDir, (err, files) => {
+        expect(err).to.be(null);
+        expect(files).to.have.length(3);
+        return done();
+      })
+    });
+  })
+
+  it("caches source maps")
+
   xit("expires the cache properly", function (done) {
   });
 
