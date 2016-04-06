@@ -1,6 +1,14 @@
 MASTER:
 
-* require_tree now works
+* File caching between runs
+* Avoid absolute path in opal module names (e.g. `Opal.modules['/root/something']`)
+* Use opal semantics when dealing with requires (no `require('./something') anymore`)
+* Make load path more explicit to behave more like Opal does (either load path is current directory and everything must be in there or the load path must be defined)
+* Test pure JS require (using similar semantics to Opal)
+* require_relative works properly
+* require_tree will once opal issues are fixed
+* Better test coverage
+* Removal Babel compilation (can assume code running under Node has es6 covered)
 
 # v1.0.0
 * Upgrade to Opal 0.9.2 [#2](https://github.com/zetachang/opalrb-loader/issues/2).
