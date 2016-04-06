@@ -79,14 +79,14 @@ describe('Opal loader', function(){
 
   it('loads basic files', function (done) {
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/basic.js'
+      entry: './test/fixtures/entry_basic.js'
     })
     assertBasic(config, done)
   })
 
   it('loads requires', function (done){
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/requires.js'
+      entry: './test/fixtures/entry_requires.js'
     })
     webpack(config, (err, stats) => {
       expect(err).to.be(null)
@@ -112,7 +112,7 @@ describe('Opal loader', function(){
 
   it('loads JS requires', function (done) {
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/js_require.js'
+      entry: './test/fixtures/entry_js_require.js'
     })
     webpack(config, (err, stats) => {
       expect(err).to.be(null)
@@ -134,10 +134,12 @@ describe('Opal loader', function(){
     })
   })
 
+  xit('load path / webpack module dir')
+
   // TODO: Several opal bugs with File.dirname and Path.join that keep this from working
   xit('loads require_tree', function (done) {
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/tree.js'
+      entry: './test/fixtures/entry_tree.js'
     })
     webpack(config, (err, stats) => {
       expect(err).to.be(null)
@@ -170,7 +172,7 @@ describe('Opal loader', function(){
 
   it('loads require_relative', function (done) {
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/relative.js'
+      entry: './test/fixtures/entry_relative.js'
     })
     webpack(config, (err, stats) => {
       expect(err).to.be(null)
@@ -199,7 +201,7 @@ describe('Opal loader', function(){
     this.timeout(10000)
 
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/source_maps.js',
+      entry: './test/fixtures/entry_source_maps.js',
       devtool: 'source-map'
     })
     webpack(config, (err, stats) => {
@@ -219,9 +221,44 @@ describe('Opal loader', function(){
     })
   })
 
+  it('passes compiler args to all files it compiles', function (done) {
+    const config = assign({}, globalConfig, {
+      entry: './test/fixtures/entry_arity.js',
+      module: {
+        loaders: [
+          {
+            test: /\.rb$/,
+            loader: opalLoader,
+            query: {
+              arity_check: true
+            }
+          }
+        ]
+      }
+    })
+    webpack(config, (err, stats) => {
+      expect(err).to.be(null)
+      expect(stats.compilation.errors).to.be.empty()
+
+      fs.readdir(outputDir, (err, files) => {
+        expect(err).to.be(null)
+        expect(files.length).to.equal(1)
+        fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
+          var subject = data.toString()
+
+          expect(err).to.be(null)
+          expect(subject).to.not.match(currentDirectoryExp)
+          expect(runCode()).to.be('[Object#onearg] wrong number of arguments(0 for 1)\n[Object#two_arg] wrong number of arguments(1 for 2)\n')
+
+          return done()
+        })
+      })
+    })
+  })
+
   it('handles errors', function (done) {
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/error.js'
+      entry: './test/fixtures/entry_error.js'
     })
     webpack(config, (err, stats) => {
       let errors = stats.compilation.errors
@@ -236,7 +273,7 @@ describe('Opal loader', function(){
   it('allows caching to a specific directory', function (done) {
     const cacheDir = 'test/output/cache'
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/basic.js',
+      entry: './test/fixtures/entry_basic.js',
       module: {
         loaders: [
           {
@@ -264,7 +301,7 @@ describe('Opal loader', function(){
   it('caches multiple modules', function(done) {
     const cacheDir = 'test/output/cache'
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/requires.js',
+      entry: './test/fixtures/entry_requires.js',
       module: {
         loaders: [
           {
@@ -292,7 +329,7 @@ describe('Opal loader', function(){
   it('caches source maps', function (done) {
     const cacheDir = 'test/output/cache'
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/source_maps.js',
+      entry: './test/fixtures/entry_source_maps.js',
       devtool: 'source-map',
       module: {
         loaders: [

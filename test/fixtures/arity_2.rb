@@ -1,0 +1,2 @@
+def onearg(arg)
+end
