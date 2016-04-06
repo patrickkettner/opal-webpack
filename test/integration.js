@@ -139,7 +139,38 @@ describe('integration', function(){
     })
   })
 
-  xit('allows stub inside require')
+  it('allows stub inside require', function(done) {
+    const config = assign({}, globalConfig, {
+      entry: './test/fixtures/entry_nested_stub.js',
+      opal: {
+        stubs: ['dependency']
+      }
+    })
+    webpack(config, (err, stats) => {
+      expect(err).to.be(null)
+      expect(stats.compilation.errors).to.be.empty()
+
+      fs.readdir(outputDir, (err, files) => {
+        expect(err).to.be(null)
+        expect(files.length).to.equal(1)
+        fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
+          var subject = data.toString()
+
+          expect(err).to.be(null)
+          expect(subject).to.not.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/)
+          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'INSIDE', 789\)/)
+          expect(subject).to.not.match(currentDirectoryExp)
+          // the stub
+          expect(subject).to.match(/Opal\.modules\["dependency"\]/)
+          expect(subject).to.match(/Opal\.modules\["another_dependency"\]/)
+          expect(subject).to.match(/Opal\.modules\["inside_load_path"\]/)
+          expect(runCode()).to.be('we made it\n')
+
+          return done()
+        })
+      })
+    })
+  })
 
   it('loads JS requires', function (done) {
     const config = assign({}, globalConfig, {
