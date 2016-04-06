@@ -5,7 +5,9 @@ const queryString = require('querystring')
 
 describe('Opal loader', function(){
   const loader = require('../index')
-  const dummyLoader = {}
+  const dummyLoader = {
+    path: 'the_loader_path'
+  }
   const defaultContext = {
     cacheable: function() {},
     loaders: [dummyLoader],
@@ -40,7 +42,7 @@ describe('Opal loader', function(){
 
   it('emits requires', function(done) {
     const callback = function (err, result) {
-      expect(result).to.match(/require\('!!undefined\?cacheIdentifier=.*&file=another_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
+      expect(result).to.match(/require\('!!the_loader_path\?cacheIdentifier=.*&file=another_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
       expect(result).to.not.match(/Opal.modules/)
       done()
     }
@@ -66,7 +68,7 @@ describe('Opal loader', function(){
 
   it('does not pass stubs on via query', function(done) {
     const callback = function (err, result) {
-      expect(result).to.not.match(/require\('!!undefined.*?stubs.*'\);/)
+      expect(result).to.not.match(/require\('!!the_loader_path.*?stubs.*'\);/)
       done()
     }
 
