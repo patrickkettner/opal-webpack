@@ -242,7 +242,7 @@ describe('Opal loader', function(){
     })
   });
 
-  it.only("caches multiple modules", function(done) {
+  it("caches multiple modules", function(done) {
     const cacheDir = 'test/output/cache'
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/requires.js',

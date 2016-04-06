@@ -10,6 +10,7 @@ const path = require('path')
 const fs = require('fs')
 const pkg = require('./package.json')
 const cache = require('./lib/fs-cache.js')
+const queryString = require('querystring')
 
 const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
 const LOAD_PATH = process.env.OPAL_LOAD_PATH ? process.env.OPAL_LOAD_PATH.split(":") : [process.cwd()];
@@ -103,7 +104,17 @@ function transpile(source, options) {
         prepend.push(`require('${require.resolve('imports-loader')}!${resolved}');`);
         prepend.push(`Opal.loaded('${filename}');`)
       } else {
-        prepend.push(`require('!!${options.currentLoader}?file=${filename}&requirable=true!${resolved}');`);
+        const passOnOptions = Object.assign({}, options, {
+          file: filename,
+          requirable: true
+        })
+        delete passOnOptions.sourceRoot
+        delete passOnOptions.currentLoader
+        delete passOnOptions.filename
+        delete passOnOptions.sourceMap
+        delete passOnOptions.relativeFileName
+        const flat = queryString.stringify(passOnOptions)
+        prepend.push(`require('!!${options.currentLoader}?${flat}!${resolved}');`);
       }
     })
   }
@@ -158,9 +169,6 @@ module.exports = function(source) {
 
   const cacheDirectory = options.cacheDirectory
   const cacheIdentifier = options.cacheIdentifier
-
-  delete options.cacheDirectory
-  delete options.cacheIdentifier
 
   this.cacheable()
 
