@@ -25,7 +25,7 @@ describe('Opal loader', function(){
       contextOverride.options = loaderOptions
     }
     const context = Object.assign({}, defaultContext, contextOverride, {
-      callback: callback,
+      callback: callback
     })
     loader.call(context, code)
   }
