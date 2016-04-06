@@ -270,7 +270,39 @@ describe('Opal loader', function(){
     });
   })
 
-  it("caches source maps")
+  it("caches source maps", function (done) {
+    const cacheDir = 'test/output/cache'
+    const config = assign({}, globalConfig, {
+      entry: './test/fixtures/source_maps.js',
+      devtool: 'source-map',
+      module: {
+        loaders: [
+          {
+            test: /\.rb$/,
+            loader: opalLoader,
+            query: {
+              cacheDirectory: cacheDir
+            }
+          }
+        ],
+      },
+    });
+    webpack(config, (err, stats) => {
+      expect(err).to.be(null);
+      expect(stats.compilation.errors).to.be.empty()
+
+      fs.readdir(outputDir, (err, files) => {
+        expect(err).to.be(null);
+        expect(files.length).to.equal(2);
+        var output = runCode('-r ./test/fixtures/load_source_maps.js')
+        // ruby output, might need some more work since we're 1 line off
+        // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
+        expect(output).to.match(/test\/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
+        expect(output).to.match(/test\/output\/loader\/webpack:\/test\/fixtures\/source_maps.rb:7:1\)/)
+        return done();
+      })
+    });
+  })
 
   xit("expires the cache properly", function (done) {
   });
