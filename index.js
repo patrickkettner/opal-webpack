@@ -97,6 +97,37 @@ function processSourceMaps(compiler, source, resourcePath, rawResult, prepend) {
   return JSON.parse(node.toStringWithSourceMap().map.toString())
 }
 
+function filterNonQueryPassOptions(options) {
+  const passOnOptions = Object.assign({}, options)
+  delete passOnOptions.sourceRoot
+  delete passOnOptions.currentLoader
+  delete passOnOptions.filename
+  delete passOnOptions.sourceMap
+  delete passOnOptions.relativeFileName
+  return passOnOptions
+}
+
+function addToWebpack(options, filename, prepend, resolved) {
+  const passOnOptions = filterNonQueryPassOptions(options)
+  Object.assign(passOnOptions, {
+    file: filename,
+    requirable: true
+  })
+  const flat = queryString.stringify(passOnOptions)
+  prepend.push(`require('!!${options.currentLoader}?${flat}!${resolved}');`)
+}
+
+function compileStub(options, filename, prepend) {
+  const compilerOptions = filterNonQueryPassOptions(options)
+  Object.assign(compilerOptions, {
+    relativeFileName: filename,
+    requirable: true
+  })
+  const compiler = getCompiler('', compilerOptions)
+  compiler.$compile()
+  prepend.push(compiler.$result())
+}
+
 function transpile(source, options) {
   const compiler = getCompiler(source, options)
 
@@ -113,22 +144,18 @@ function transpile(source, options) {
 
   const addRequires = files => {
     files.forEach(filename => {
-      var resolved = resolveFilename(filename).absolute
-      if (resolved.match(/\.js$/)) {
+      var isStub = options.stubs && options.stubs.indexOf(filename) != -1
+      var resolved = isStub ? null : resolveFilename(filename).absolute
+      if (resolved && resolved.match(/\.js$/)) {
         prepend.push(`require('${require.resolve('imports-loader')}!${resolved}');`)
         prepend.push(`Opal.loaded('${filename}');`)
       } else {
-        const passOnOptions = Object.assign({}, options, {
-          file: filename,
-          requirable: true
-        })
-        delete passOnOptions.sourceRoot
-        delete passOnOptions.currentLoader
-        delete passOnOptions.filename
-        delete passOnOptions.sourceMap
-        delete passOnOptions.relativeFileName
-        const flat = queryString.stringify(passOnOptions)
-        prepend.push(`require('!!${options.currentLoader}?${flat}!${resolved}');`)
+        if (isStub) {
+          compileStub(options, filename, prepend)
+        }
+        else {
+          addToWebpack(options, filename, prepend, resolved)
+        }
       }
     })
   }

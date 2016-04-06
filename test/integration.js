@@ -110,6 +110,8 @@ describe('integration', function(){
     })
   })
 
+  xit('works with stubs')
+
   it('loads JS requires', function (done) {
     const config = assign({}, globalConfig, {
       entry: './test/fixtures/entry_js_require.js'
@@ -218,6 +220,8 @@ describe('integration', function(){
       })
     })
   })
+
+  xit('outputs correct source maps when stubs are used')
 
   it('passes compiler args to all files it compiles', function (done) {
     const config = assign({}, globalConfig, {

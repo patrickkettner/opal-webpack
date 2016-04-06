@@ -14,12 +14,15 @@ describe('Opal loader', function(){
     resource: ['dependency.rb'] // just needs to be a dummy file that exists for now
   }
 
-  function callLoader(callback, code, queryOptions) {
-    let options = {}
+  function callLoader(callback, code, queryOptions, loaderOptions) {
+    let contextOverride = {}
     if (queryOptions) {
-      options.query = '?' + queryString.stringify(queryOptions)
+      contextOverride.query = '?' + queryString.stringify(queryOptions)
     }
-    const context = Object.assign({}, defaultContext, options, {
+    if (loaderOptions) {
+      contextOverride.options = loaderOptions
+    }
+    const context = Object.assign({}, defaultContext, contextOverride, {
       callback: callback,
     })
     loader.call(context, code)
@@ -43,6 +46,22 @@ describe('Opal loader', function(){
     }
 
     callLoader(callback, 'require "another_dependency"')
+  })
+
+  it('allows stubs', function(done) {
+    const callback = function (err, result) {
+      expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
+      expect(result).to.match(/Opal.modules\["stubbed"\]/)
+      done()
+    }
+
+    const options = {
+      opal: {
+        stubs: ['stubbed']
+      }
+    }
+
+    callLoader(callback, 'require "stubbed"; HELLO=123', null, options)
   })
 
   it('obeys requireable', function(done) {
