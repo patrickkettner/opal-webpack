@@ -66,6 +66,26 @@ describe('Opal loader', function(){
     callLoader(callback, 'require "stubbed"; HELLO=123', null, options)
   })
 
+  it('does not let compile state bleed over into stub compile state', function(done) {
+    const callback = function (err, result) {
+      expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
+      expect(result).to.match(/Opal.modules\["stubbed"\]/)
+      done()
+    }
+
+    const options = {
+      opal: {
+        stubs: ['stubbed']
+      }
+    }
+
+    const queryOptions = {
+      file: 'foobar'
+    }
+
+    callLoader(callback, 'require "stubbed"; HELLO=123', queryOptions, options)
+  })
+
   it('does not pass stubs on via query', function(done) {
     const callback = function (err, result) {
       expect(result).to.not.match(/require\('!!the_loader_path.*?stubs.*'\);/)

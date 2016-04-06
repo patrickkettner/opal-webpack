@@ -104,6 +104,7 @@ function filterNonQueryPassOptions(options) {
   delete passOnOptions.filename
   delete passOnOptions.sourceMap
   delete passOnOptions.relativeFileName
+  // stubs are global, do not want to locally override these
   delete passOnOptions.stubs
   return passOnOptions
 }
@@ -124,6 +125,9 @@ function compileStub(options, filename, prepend) {
     relativeFileName: filename,
     requirable: true
   })
+  // if a stub is require'ed in a require'ed file, then file will be present and will override
+  // the stubbed filename we're supplying
+  delete compilerOptions.file
   const compiler = getCompiler('', compilerOptions)
   compiler.$compile()
   prepend.push(compiler.$result())
