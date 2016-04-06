@@ -174,7 +174,8 @@ describe('Opal loader', function(){
   it("reloads dependencies", function (done) {
     this.timeout(6000)
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/requires.js'
+      entry: './test/fixtures/requires.js',
+      watch: true
     });
     webpack(config, (err, stats) => {
       expect(err).to.be(null)
@@ -189,7 +190,7 @@ describe('Opal loader', function(){
 
             expect(err).to.be(null);
             expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 456\)/);
-            expect(runCode()).to.be("456\n")
+            expect(runCode()).to.be("456\nwe made it\n")
 
             return done();
           })
