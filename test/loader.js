@@ -11,7 +11,7 @@ describe('Opal loader', function(){
     loaders: [dummyLoader],
     options: {},
     loaderIndex: 0,
-    resource: ['dependency.rb']
+    resource: ['dependency.rb'] // just needs to be a dummy file that exists for now
   }
 
   function callLoader(callback, code, queryOptions) {
@@ -33,6 +33,30 @@ describe('Opal loader', function(){
     }
 
     callLoader(callback, 'HELLO=123')
+  })
+
+  it('emits requires', function(done) {
+    const callback = function (err, result) {
+      expect(result).to.match(/require\('!!undefined\?cacheIdentifier=.*&file=another_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
+      expect(result).to.not.match(/Opal.modules/)
+      done()
+    }
+
+    callLoader(callback, 'require "another_dependency"')
+  })
+
+  it('obeys requireable', function(done) {
+    const callback = function (err, result) {
+      expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
+      expect(result).to.match(/Opal.modules\["dependency"\]/)
+      done()
+    }
+
+    const queryOptions = {
+      requirable: true
+    }
+
+    callLoader(callback, 'HELLO=123', queryOptions)
   })
 
   it('uses compile options', function(done) {
