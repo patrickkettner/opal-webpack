@@ -1,1 +1,1 @@
-HELLO=123
+puts HELLO=123

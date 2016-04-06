@@ -49,6 +49,7 @@ describe('Opal loader', function(){
           expect(err).to.be(null);
           expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/);
           expect(subject).to.not.match(currentDirectoryExp)
+          expect(runCode()).to.be("123\n")
 
           return done();
         });
@@ -58,8 +59,9 @@ describe('Opal loader', function(){
 
   function runCode(otherArgs) {
     fsExtra.mkdirpSync('./tmp')
+    const args = otherArgs || ''
     execSync("ls ./tmp/opal.js || bundle exec opal -c -e \"require 'opal'\" > ./tmp/opal.js");
-    return execSync(`node -r ./tmp/opal.js ${otherArgs} ./test/output/loader/0.loader.js 2>&1 || true`).toString()
+    return execSync(`node -r ./tmp/opal.js ${args} ./test/output/loader/0.loader.js 2>&1 || true`).toString()
   }
 
   beforeEach(function (done) {
