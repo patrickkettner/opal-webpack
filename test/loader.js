@@ -59,6 +59,15 @@ describe('Opal loader', function(){
     callLoader(callback, 'HELLO=123', queryOptions)
   })
 
+  it('handles a JS require', function(done) {
+    const callback = function (err, result) {
+      expect(result).to.match(/require\('.*imports-loader\/index.js!.*test\/fixtures\/pure_js.js'\);/)
+      done()
+    }
+
+    callLoader(callback, 'require "pure_js"')
+  })
+
   it('uses compile options', function(done) {
     const callback = function (err, result) {
       expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
