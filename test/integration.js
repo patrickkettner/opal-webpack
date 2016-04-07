@@ -281,7 +281,32 @@ describe('integration', function(){
     })
   })
 
-  xit('outputs correct source maps when stubs are used')
+  it('outputs correct source maps when stubs are used', function (done) {
+    this.timeout(10000)
+
+    const config = assign({}, globalConfig, {
+      entry: './test/fixtures/entry_source_maps_stubs.js',
+      devtool: 'source-map',
+      opal: {
+        stubs: ['dependency1', 'dependency2', 'dependency3', 'dependency4']
+      }
+    })
+    webpack(config, (err, stats) => {
+      expect(err).to.be(null)
+      expect(stats.compilation.errors).to.be.empty()
+
+      fs.readdir(outputDir, (err, files) => {
+        expect(err).to.be(null)
+        expect(files.length).to.equal(2)
+        var output = runCode('-r ./test/fixtures/load_source_maps.js')
+        // ruby output, might need some more work since we're 1 line off
+        // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
+        expect(output).to.match(/test\/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs\.rb:6:1\)/)
+        expect(output).to.match(/test\/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs.rb:10:1\)/)
+        return done()
+      })
+    })
+  })
 
   it('passes compiler args to all files it compiles', function (done) {
     const config = assign({}, globalConfig, {
