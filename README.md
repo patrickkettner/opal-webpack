@@ -7,7 +7,7 @@ Check out [this blog post](https://medium.com/@cj/from-sprockets-to-webpack-5f3d
 
 [![npm version](https://img.shields.io/npm/v/opal-webpack.svg?style=flat-square)](https://www.npmjs.com/package/opal-webpack)
 [![npm downloads](https://img.shields.io/npm/dt/opal-webpack.svg?style=flat-square)](https://www.npmjs.com/package/opal-webpack)
-[![Circle CI](https://circleci.com/gh/cj/opalrb-loader.svg?style=svg)](https://circleci.com/gh/cj/opalrb-loader)
+[![Circle CI](https://circleci.com/gh/cj/opal-webpack.svg?style=svg)](https://circleci.com/gh/cj/opal-webpack)
 
 ## Installation
 
@@ -75,7 +75,7 @@ See the example [Rakefile](https://github.com/cj/opalrb-loader/blob/master/examp
 
 ### Examples
 
-It's under [Examples](https://github.com/cj/opalrb-loader/tree/master/examples) folder.
+It's under [Examples](https://github.com/cj/opal-webpack/tree/master/examples) folder.
 
 * simple: Basic setup without further dependency.
 * complex: Compile opal/corelib and other gems.
