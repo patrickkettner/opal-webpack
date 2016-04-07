@@ -88,9 +88,11 @@ It's under [Examples](https://github.com/cj/opalrb-loader/tree/master/examples) 
 
 ## Contact
 
-[David Chang](http://github.com/cj)
-[@cj](https://twitter.com/cj)
+[CJ Lazell](http://github.com/cj)
+[@ceej](https://twitter.com/cj)
 
 ## License
 
 Available under the MIT license. See the LICENSE file for more info.
+
+### This wouldn't be possible without [David Chang](https://github.com/zetachang)
