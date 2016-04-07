@@ -1,18 +1,18 @@
-# opalrb-loader
+# opal-webpack
 > Opal is a compiler for writing JavaScript in Ruby.
 
 This package allows transpiling Ruby files using [Opal](http://opalrb.org) and [webpack](https://github.com/webpack/webpack).
 
-Check out [this blog post](https://medium.com/@zetachang/from-sprockets-to-webpack-5f3d1afbd1b0) if you are interested in the project background.
+Check out [this blog post](https://medium.com/@cj/from-sprockets-to-webpack-5f3d1afbd1b0) if you are interested in the project background.
 
-[![npm version](https://img.shields.io/npm/v/opalrb-loader.svg?style=flat-square)](https://www.npmjs.com/package/opalrb-loader)
-[![npm downloads](https://img.shields.io/npm/dt/opalrb-loader.svg?style=flat-square)](https://www.npmjs.com/package/opalrb-loader)
-[![Circle CI](https://circleci.com/gh/zetachang/opalrb-loader.svg?style=svg)](https://circleci.com/gh/zetachang/opalrb-loader)
+[![npm version](https://img.shields.io/npm/v/opal-webpack.svg?style=flat-square)](https://www.npmjs.com/package/opal-webpack)
+[![npm downloads](https://img.shields.io/npm/dt/opal-webpack.svg?style=flat-square)](https://www.npmjs.com/package/opal-webpack)
+[![Circle CI](https://circleci.com/gh/cj/opalrb-loader.svg?style=svg)](https://circleci.com/gh/cj/opalrb-loader)
 
 ## Installation
 
 ```bash
-npm install opalrb-loader --save-dev
+npm install opal-webpack --save-dev
 ```
 
 ## Usage
@@ -25,7 +25,7 @@ module: {
   loaders: [
     {
       test: /\.rb?$/,
-      loader: 'opalrb-loader'
+      loader: 'opal-webpack'
     }
   ]
 }
@@ -41,7 +41,7 @@ module: {
   loaders: [
     {
       test: /\.rb?$/,
-      loader: 'opalrb-loader',
+      loader: 'opal-webpack',
       query: {
         requirable: false,
         freezing: false,
@@ -55,9 +55,9 @@ module: {
 
 By passing `OPAL_LOAD_PATH` environment variable to webpack, the loader will correctly resolve file other than relative path.
 
-`opalrb-loader` is only bundled with compiler module. It left the decision on managing runtime, corelib or gems to developer. 
+`opal-webpack` is only bundled with compiler module. It left the decision on managing runtime, corelib or gems to developer. 
 
-See the example [Rakefile](https://github.com/zetachang/opalrb-loader/blob/master/examples/complex/Rakefile) for how to integrate using other Opal gems. 
+See the example [Rakefile](https://github.com/cj/opalrb-loader/blob/master/examples/complex/Rakefile) for how to integrate using other Opal gems. 
 
 ### Compared to `Opal::Builder`
 * Relative `require` is correctly resolved.
@@ -75,7 +75,7 @@ See the example [Rakefile](https://github.com/zetachang/opalrb-loader/blob/maste
 
 ### Examples
 
-It's under [Examples](https://github.com/zetachang/opalrb-loader/tree/master/examples) folder.
+It's under [Examples](https://github.com/cj/opalrb-loader/tree/master/examples) folder.
 
 * simple: Basic setup without further dependency.
 * complex: Compile opal/corelib and other gems.
@@ -88,8 +88,8 @@ It's under [Examples](https://github.com/zetachang/opalrb-loader/tree/master/exa
 
 ## Contact
 
-[David Chang](http://github.com/zetachang)
-[@zetachang](https://twitter.com/zetachang)
+[David Chang](http://github.com/cj)
+[@cj](https://twitter.com/cj)
 
 ## License
 

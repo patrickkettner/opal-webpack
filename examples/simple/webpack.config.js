@@ -9,7 +9,7 @@ module.exports = {
     loaders: [
       { 
         test: /\.rb$/, 
-        loader: "opalrb-loader",
+        loader: "opal-webpack",
       }
     ]
   },

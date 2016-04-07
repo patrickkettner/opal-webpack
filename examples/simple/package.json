@@ -6,6 +6,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "opalrb-loader": "file:../.."
+    "opal-webpack": "file:../.."
   }
 }

@@ -1,5 +1,5 @@
 # v1.0.0
-* Upgrade to Opal 0.9.2 [#2](https://github.com/zetachang/opalrb-loader/issues/2).
+* Upgrade to Opal 0.9.2 [#2](https://github.com/cj/opalrb-loader/issues/2).
 * Opal compiler bundled is now minified.
 
 # v0.0.3

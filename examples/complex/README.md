@@ -12,6 +12,6 @@
 
 ### `rake webpack`
 
-`opalrb-loader` rely on `OPAL_LOAD_PATH` environment variable to correctly resolve file other than relative path.
+`opal-webpack` rely on `OPAL_LOAD_PATH` environment variable to correctly resolve file other than relative path.
 
 This task simply supply the variable to webpack by using `Opal.paths`. Gem which is aware of Opal will correctly add its path to `Opal.paths` on required. Otherwise, you need to invoke `Opal.use_gem` to manually collect paths.
