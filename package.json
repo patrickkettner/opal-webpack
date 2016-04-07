@@ -1,6 +1,6 @@
 {
-  "name": "opalrb-loader",
-  "version": "0.1.0",
+  "name": "opal-webpack",
+  "version": "0.10.0-beta2",
   "description": "Opal Ruby module loader for webpack",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,10 @@
     "prepare": "npm run build_compiler; babel index.es6.js --out-file index.js; npm test",
     "prepublish": "npm run prepare"
   },
-  "author": "David Chang",
+  "author": "CJ Lazell",
+  "contributors": [{
+    "name": "David Chang"
+  }],
   "keywords": [
     "webpack",
     "loader",

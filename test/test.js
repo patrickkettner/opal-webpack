@@ -10,7 +10,7 @@ describe('Opal compiler', function(){
   it('should compile ruby source', function(){
     require("../vendor/opal-compiler");
     
-    var compiler = Opal.Opal.Compiler.$new('puts "Howdy #{1+2}"');    
+    var compiler = Opal.Opal.$$scope.Compiler.$new('puts "Howdy #{1+2}"');    
         
     compiler.$compile();
     

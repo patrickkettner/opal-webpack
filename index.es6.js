@@ -56,7 +56,7 @@ module.exports = function(source) {
   if(!callback) throw new Error("Sync mode not supported");
 
   const compilerOptions = Object.assign({file: this.resourcePath}, loaderUtils.parseQuery(this.query));
-  const compiler = Opal.Opal.Compiler.$new(source, Opal.hash(compilerOptions));    
+  const compiler = Opal.Opal.$$scope.Compiler.$new(source, Opal.hash(compilerOptions));    
   const currentLoader = getCurrentLoader(this).path;
   
   this.cacheable && this.cacheable()
