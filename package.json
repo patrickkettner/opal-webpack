@@ -11,9 +11,11 @@
     "prepublish": "npm run prepare"
   },
   "author": "CJ Lazell",
-  "contributors": [{
-    "name": "David Chang"
-  }],
+  "contributors": [
+    {
+      "name": "David Chang"
+    }
+  ],
   "keywords": [
     "webpack",
     "loader",
@@ -36,6 +38,7 @@
     "babel-preset-es2015": "^6.6.0",
     "expect.js": "^0.3.1",
     "mkdirp": "^0.5.1",
+    "mocha": "^2.4.5",
     "object-assign": "^4.0.1",
     "rimraf": "^2.5.2",
     "source-map-support": "^0.4.0",
