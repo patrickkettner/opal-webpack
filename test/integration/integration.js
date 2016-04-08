@@ -19,7 +19,7 @@ describe('integration', function(){
   const dependencyMain = './test/fixtures/dependency.rb'
   const dependencyBackup = './test/fixtures/dependency.rb.backup'
   const opalLoader = path.resolve(__dirname, '../')
-  const outputBaseDir = path.resolve(__dirname, 'output')
+  const outputBaseDir = path.resolve(__dirname, 'integration' ,'output')
   const outputDir = path.resolve(outputBaseDir, 'loader')
   const globalConfig = {
     output: {
