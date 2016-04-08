@@ -76,13 +76,13 @@ describe('compiler', function(){
     it('require relative', function () {
       var result = doRequireCompile('require_relative "a_file"')
 
-      expect(result).to.match(/self.\$require\("foo"+ '\/..\/' + "a_file"\)/)
+      expect(result).to.match(/self.\$require\("foo"\+ '\/..\/' \+ "a_file"\)/)
     })
 
-    it('require relative with leading dot', function (done) {
+    it('require relative with leading dot', function () {
       var result = doRequireCompile('require_relative "./a_file"')
 
-      expect(result).to.match(/self.\$require\("foo"+ '\/..\/' + "\.\/a_file"\)/)
+      expect(result).to.match(/self.\$require\("foo"\+ '\/..\/' \+ "\.\/a_file"\)/)
     })
   })
 })
