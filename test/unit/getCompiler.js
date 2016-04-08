@@ -50,7 +50,7 @@ describe('compiler', function(){
     it('node conventions', function() {
       var result = doModuleCompile('./dependency')
 
-      expect(result).to.match(/Opal.modules\["dependency\/foo"\]/)
+      expect(result).to.match(/Opal.modules\["dependency"\]/)
     })
   })
 
