@@ -11,5 +11,4 @@ dependencies:
 
 test:
   pre:
-    - npm prepare
-    - npm eslint
+    - npm run eslint
