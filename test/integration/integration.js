@@ -15,11 +15,15 @@ RegExp.escape = function(s) {
 }
 
 describe('integration', function(){
+  const outputBaseDir = path.resolve(__dirname, 'output')
+  const cacheDir = path.join(outputBaseDir, 'cache')
+  const fixturesDir = path.resolve(__dirname, '../fixtures')
   const currentDirectoryExp = new RegExp(RegExp.escape(process.cwd()))
-  const dependencyMain = './test/fixtures/dependency.rb'
-  const dependencyBackup = './test/fixtures/dependency.rb.backup'
-  const opalLoader = path.resolve(__dirname, '../')
-  const outputBaseDir = path.resolve(__dirname,'output')
+  function aFixture(file) { return path.join(fixturesDir, file) }
+
+  const dependencyMain = aFixture('dependency.rb')
+  const dependencyBackup = aFixture('dependency.rb.backup')
+  const opalLoader = path.resolve(__dirname, '../../')
   const outputDir = path.resolve(outputBaseDir, 'loader')
   const globalConfig = {
     output: {
@@ -61,7 +65,7 @@ describe('integration', function(){
     fsExtra.mkdirpSync('./tmp')
     const args = otherArgs || ''
     execSync('ls ./tmp/opal.js || bundle exec opal -c -e "require \'opal\'" > ./tmp/opal.js')
-    return execSync(`node -r ./tmp/opal.js ${args} ./test/output/loader/0.loader.js 2>&1 || true`).toString()
+    return execSync(`node -r ./tmp/opal.js ${args} ./test/integration/output/loader/0.loader.js 2>&1 || true`).toString()
   }
 
   beforeEach(function (done) {
@@ -79,14 +83,14 @@ describe('integration', function(){
 
   it('loads basic files', function (done) {
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/entry_basic.js'
+      entry: aFixture('entry_basic.js')
     })
     assertBasic(config, done)
   })
 
   it('loads requires', function (done){
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/entry_another_dep.js'
+      entry: aFixture('entry_another_dep.js')
     })
     webpack(config, (err, stats) => {
       expect(err).to.be(null)
@@ -112,7 +116,7 @@ describe('integration', function(){
 
   it('works with stubs', function (done) {
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/entry_another_dep.js',
+      entry: aFixture('entry_another_dep.js'),
       opal: {
         stubs: ['dependency']
       }
@@ -141,7 +145,7 @@ describe('integration', function(){
 
   it('allows stub inside require', function(done) {
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/entry_nested_stub.js',
+      entry: aFixture('entry_nested_stub.js'),
       opal: {
         stubs: ['dependency']
       }
@@ -174,7 +178,7 @@ describe('integration', function(){
 
   it('loads JS requires', function (done) {
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/entry_js_require.js'
+      entry: aFixture('entry_js_require.js')
     })
     webpack(config, (err, stats) => {
       expect(err).to.be(null)
@@ -199,7 +203,7 @@ describe('integration', function(){
   // TODO: Several opal bugs with File.dirname and Path.join that keep this from working
   xit('loads require_tree', function (done) {
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/entry_tree.js'
+      entry: aFixture('entry_tree.js')
     })
     webpack(config, (err, stats) => {
       expect(err).to.be(null)
@@ -232,7 +236,7 @@ describe('integration', function(){
 
   it('loads require_relative', function (done) {
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/entry_relative.js'
+      entry: aFixture('entry_relative.js')
     })
     webpack(config, (err, stats) => {
       expect(err).to.be(null)
@@ -261,7 +265,7 @@ describe('integration', function(){
     this.timeout(10000)
 
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/entry_source_maps.js',
+      entry: aFixture('entry_source_maps.js'),
       devtool: 'source-map'
     })
     webpack(config, (err, stats) => {
@@ -271,11 +275,11 @@ describe('integration', function(){
       fs.readdir(outputDir, (err, files) => {
         expect(err).to.be(null)
         expect(files.length).to.equal(2)
-        var output = runCode('-r ./test/fixtures/load_source_maps.js')
+        var output = runCode('-r '+aFixture('load_source_maps.js'))
         // ruby output, might need some more work since we're 1 line off
         // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
-        expect(output).to.match(/test\/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
-        expect(output).to.match(/test\/output\/loader\/webpack:\/test\/fixtures\/source_maps.rb:7:1\)/)
+        expect(output).to.match(/test\/integration\/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
+        expect(output).to.match(/test\/integration\/output\/loader\/webpack:\/test\/fixtures\/source_maps.rb:7:1\)/)
         return done()
       })
     })
@@ -285,7 +289,7 @@ describe('integration', function(){
     this.timeout(10000)
 
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/entry_source_maps_stubs.js',
+      entry: aFixture('entry_source_maps_stubs.js'),
       devtool: 'source-map',
       opal: {
         stubs: ['dependency1', 'dependency2', 'dependency3', 'dependency4']
@@ -298,11 +302,11 @@ describe('integration', function(){
       fs.readdir(outputDir, (err, files) => {
         expect(err).to.be(null)
         expect(files.length).to.equal(2)
-        var output = runCode('-r ./test/fixtures/load_source_maps.js')
+        var output = runCode('-r '+aFixture('load_source_maps.js'))
         // ruby output, might need some more work since we're 1 line off
         // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
-        expect(output).to.match(/test\/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs\.rb:6:1\)/)
-        expect(output).to.match(/test\/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs.rb:10:1\)/)
+        expect(output).to.match(/test\/integration\/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs\.rb:6:1\)/)
+        expect(output).to.match(/test\/integration\/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs.rb:10:1\)/)
         return done()
       })
     })
@@ -310,7 +314,7 @@ describe('integration', function(){
 
   it('passes compiler args to all files it compiles', function (done) {
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/entry_arity.js',
+      entry: aFixture('entry_arity.js'),
       module: {
         loaders: [
           {
@@ -345,7 +349,7 @@ describe('integration', function(){
 
   it('handles errors', function (done) {
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/entry_error.js'
+      entry: aFixture('entry_error.js')
     })
     webpack(config, (err, stats) => {
       let errors = stats.compilation.errors
@@ -358,9 +362,8 @@ describe('integration', function(){
   })
 
   it('allows caching to a specific directory', function (done) {
-    const cacheDir = 'test/output/cache'
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/entry_basic.js',
+      entry: aFixture('entry_basic.js'),
       module: {
         loaders: [
           {
@@ -386,9 +389,8 @@ describe('integration', function(){
   })
 
   it('caches multiple modules', function(done) {
-    const cacheDir = 'test/output/cache'
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/entry_another_dep.js',
+      entry: aFixture('entry_another_dep.js'),
       module: {
         loaders: [
           {
@@ -414,9 +416,8 @@ describe('integration', function(){
   })
 
   it('caches source maps', function (done) {
-    const cacheDir = 'test/output/cache'
     const config = assign({}, globalConfig, {
-      entry: './test/fixtures/entry_source_maps.js',
+      entry: aFixture('entry_source_maps.js'),
       devtool: 'source-map',
       module: {
         loaders: [
@@ -437,11 +438,11 @@ describe('integration', function(){
       fs.readdir(outputDir, (err, files) => {
         expect(err).to.be(null)
         expect(files.length).to.equal(2)
-        var output = runCode('-r ./test/fixtures/load_source_maps.js')
+        var output = runCode('-r '+aFixture('load_source_maps.js'))
         // ruby output, might need some more work since we're 1 line off
         // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
-        expect(output).to.match(/test\/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
-        expect(output).to.match(/test\/output\/loader\/webpack:\/test\/fixtures\/source_maps.rb:7:1\)/)
+        expect(output).to.match(/test\/integration\/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
+        expect(output).to.match(/test\/integration\/output\/loader\/webpack:\/test\/fixtures\/source_maps.rb:7:1\)/)
         return done()
       })
     })
