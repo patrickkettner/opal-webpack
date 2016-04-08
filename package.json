@@ -10,10 +10,10 @@
   ],
   "scripts": {
     "build_compiler": "bundle exec opal --no-exit -c lib/compiler.rb | uglifyjs > vendor/opal-compiler.js",
-    "test": "OPAL_LOAD_PATH=./test/fixtures:./test/fixtures/load_path mocha",
+    "test": "OPAL_LOAD_PATH=./test/fixtures:./test/fixtures/load_path mocha test/unit test/integration",
     "prepare": "npm run build_compiler; npm test",
     "prepublish": "npm run prepare",
-    "eslint": "eslint index.js test --ignore-pattern test/output"
+    "eslint": "eslint index.js test --ignore-pattern test/integration/output"
   },
   "author": "David Chang",
   "keywords": [
