@@ -2,13 +2,13 @@ var assert = require('assert')
 
 describe('Opal compiler', function(){
   it('should correctly export to global scope', function(){
-    require('../vendor/opal-compiler')
+    require('../../vendor/opal-compiler')
 
     assert.equal(Opal !== undefined, true)
   })
 
   it('should compile ruby source', function(){
-    require('../vendor/opal-compiler')
+    require('../../vendor/opal-compiler')
 
     var compiler = Opal.Opal.Compiler.$new('puts "Howdy #{1+2}"')
 
