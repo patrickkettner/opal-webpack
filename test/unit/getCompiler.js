@@ -55,64 +55,34 @@ describe('compiler', function(){
   })
 
   describe('Opal requires', function() {
-    it('node conventions', function (done) {
-      const callback = function (err, result) {
-        expect(result).to.match(/self.\$require\("a_file"\)/)
-        done()
-      }
+    function doRequireCompile(statement) {
+      return doCompile('foo.rb', statement, {
+        stubs: ['a_file']
+      })
+    }
 
-      const options = {
-        opal: {
-          stubs: ['a_file']
-        }
-      }
+    it('node conventions', function () {
+      var result = doRequireCompile('require "./a_file"')
 
-      callLoader(callback, 'require "./a_file"', null, options)
+      expect(result).to.match(/self.\$require\("a_file"\)/)
     })
 
-    it('standard require', function (done) {
-      const callback = function (err, result) {
-        expect(result).to.match(/self.\$require\("a_file"\)/)
-        done()
-      }
+    it('standard require', function () {
+      var result = doRequireCompile('require "a_file"')
 
-      const options = {
-        opal: {
-          stubs: ['a_file']
-        }
-      }
-
-      callLoader(callback, 'require "a_file"', null, options)
+      expect(result).to.match(/self.\$require\("a_file"\)/)
     })
 
-    it('require relative', function (done) {
-      const callback = function (err, result) {
-        expect(result).to.match(/self.\$require\("dependency"+ '\/..\/' + "a_file"\)/)
-        done()
-      }
+    it('require relative', function () {
+      var result = doRequireCompile('require_relative "a_file"')
 
-      const options = {
-        opal: {
-          stubs: ['a_file']
-        }
-      }
-
-      callLoader(callback, 'require_relative "a_file"', null, options)
+      expect(result).to.match(/self.\$require\("foo"+ '\/..\/' + "a_file"\)/)
     })
 
     it('require relative with leading dot', function (done) {
-      const callback = function (err, result) {
-        expect(result).to.match(/self.\$require\("dependency"+ '\/..\/' + "\.\/a_file"\)/)
-        done()
-      }
+      var result = doRequireCompile('require_relative "./a_file"')
 
-      const options = {
-        opal: {
-          stubs: ['a_file']
-        }
-      }
-
-      callLoader(callback, 'require_relative "./a_file"', null, options)
+      expect(result).to.match(/self.\$require\("foo"+ '\/..\/' + "\.\/a_file"\)/)
     })
   })
 })
