@@ -1,15 +1,10 @@
-var assert = require('assert')
+'use strict'
+
+const assert = require('assert')
+const Opal = require('../../lib/opal')
 
 describe('Opal compiler', function(){
-  it('should correctly export to global scope', function(){
-    require('../../vendor/opal-compiler')
-
-    assert.equal(Opal !== undefined, true)
-  })
-
   it('should compile ruby source', function(){
-    require('../../vendor/opal-compiler')
-
     var compiler = Opal.Opal.Compiler.$new('puts "Howdy #{1+2}"')
 
     compiler.$compile()
