@@ -9,7 +9,7 @@
     "vendor"
   ],
   "scripts": {
-    "build_compiler": "bundle exec opal --no-exit -c compiler.rb | uglifyjs > vendor/opal-compiler.js",
+    "build_compiler": "bundle exec opal --no-exit -c lib/compiler.rb | uglifyjs > vendor/opal-compiler.js",
     "test": "OPAL_LOAD_PATH=./test/fixtures:./test/fixtures/load_path mocha",
     "prepare": "npm run build_compiler; npm test",
     "prepublish": "npm run prepare",
