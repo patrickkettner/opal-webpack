@@ -5,6 +5,7 @@ machine:
     version: 2.2.4
   environment:
     MOCHA_FILE: $CIRCLE_TEST_REPORTS/test-results.xml
+    MOCHA_OPTIONS: "--reporter mocha-circleci-reporter"
 
 dependencies:
   override:
