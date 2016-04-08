@@ -4,6 +4,7 @@ const expect = require('expect.js')
 const queryString = require('querystring')
 
 describe('Opal loader', function(){
+  // TODO: Set load paths
   const loader = require('../index')
   const dummyLoader = {
     path: 'the_loader_path'
@@ -205,7 +206,7 @@ describe('Opal loader', function(){
 
     it('require relative', function (done) {
       const callback = function (err, result) {
-        expect(result).to.match(/self.\$require\("a_file"\)/)
+        expect(result).to.match(/self.\$require\("dependency"+ '\/..\/' + "a_file"\)/)
         done()
       }
 
@@ -220,7 +221,7 @@ describe('Opal loader', function(){
 
     it('require relative with leading dot', function (done) {
       const callback = function (err, result) {
-        expect(result).to.match(/self.\$require\("a_file"\)/)
+        expect(result).to.match(/self.\$require\("dependency"+ '\/..\/' + "\.\/a_file"\)/)
         done()
       }
 
