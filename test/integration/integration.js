@@ -61,10 +61,13 @@ describe('integration', function(){
     })
   }
 
-  function runCode(otherArgs) {
+  beforeEach(function() {
     fsExtra.mkdirpSync('./tmp')
+    execSync('ls ./tmp/opal.js 1>/dev/null 2>&1 || bundle exec opal -c -e "require \'opal\'" > ./tmp/opal.js')
+  })
+
+  function runCode(otherArgs) {
     const args = otherArgs || ''
-    execSync('ls ./tmp/opal.js || bundle exec opal -c -e "require \'opal\'" > ./tmp/opal.js')
     return execSync(`node -r ./tmp/opal.js ${args} ./test/integration/output/loader/0.loader.js 2>&1 || true`).toString()
   }
 
