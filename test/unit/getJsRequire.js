@@ -1,7 +1,6 @@
 'use strict'
 
 const expect = require('expect.js')
-require('../../index.js')
 const getJsRequire = require('../../lib/getJsRequire')
 
 describe('getJsRequire', function(){
