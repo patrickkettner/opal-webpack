@@ -51,6 +51,47 @@ module: {
 }
 ```
 
+#### Stubs
+
+To tell the Opal compiler to stub out certain dependencies, do this
+
+```js
+{
+  module: {
+    loaders: [
+      {
+        test: /\.rb?$/,
+        loader: 'opalrb-loader'
+      }
+    ]
+  },
+  opal: {
+    stubs: ['dependency']
+  }
+}
+```
+
+#### Caching
+
+Just like the Babel loader, you can cache compilation results on the filesystem to improve load times
+between invocations of webpack.
+
+```js
+{
+  module: {
+    loaders: [
+      {
+        test: /\.rb?$/,
+        loader: 'opalrb-loader'
+      }
+    ]
+  },
+  opal: {
+    cacheDirectory: './tmp/cache'
+  }
+}
+```
+
 #### OPAL_LOAD_PATH
 
 By passing `OPAL_LOAD_PATH` environment variable to webpack, the loader will correctly resolve file other than relative path.
