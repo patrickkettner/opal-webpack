@@ -24,7 +24,6 @@ module.exports = function(source) {
   const relativeFileName = resolveFilename(filename).relative
   const defaultOptions = {
     sourceRoot: process.cwd(),
-    currentLoader: getCurrentLoader(this).path,
     filename: filename,
     relativeFileName: relativeFileName,
     cacheIdentifier: JSON.stringify({
@@ -44,6 +43,9 @@ module.exports = function(source) {
 
   this.cacheable()
 
+  const currentLoader = getCurrentLoader(this)
+  const transpileInContext = function(source, opt) { return transpile(source, opt, currentLoader) }
+
   if (cacheDirectory) {
     var callback = this.async()
     return cache({
@@ -51,7 +53,7 @@ module.exports = function(source) {
       identifier: cacheIdentifier,
       source: source,
       options: options,
-      transform: transpile
+      transform: transpileInContext
     }, function(err, result) {
       if (err) {
         return callback(err)
@@ -59,6 +61,6 @@ module.exports = function(source) {
       return callback(null, result.code, result.map)
     })
   }
-  result = transpile(source, options)
+  result = transpileInContext(source, options)
   this.callback(null, result.code, result.map)
 }

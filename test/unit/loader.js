@@ -81,7 +81,7 @@ describe('Opal loader', function(){
 
     it('JS require', function(done) {
       const callback = function (err, result) {
-        expect(result).to.match(/require\('.*imports-loader\/index.js!.*test\/fixtures\/pure_js.js'\);/)
+        expect(result).to.match(/require\('imports!.*test\/fixtures\/pure_js.js'\);/)
         done()
       }
 
