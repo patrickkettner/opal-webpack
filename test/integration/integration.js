@@ -114,6 +114,32 @@ describe('integration', function(){
     })
   })
 
+  it('loads requires with node conventions', function (done){
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_another_dep_node.js')
+    })
+    webpack(config, (err, stats) => {
+      expect(err).to.be(null)
+      expect(stats.compilation.errors).to.be.empty()
+
+      fs.readdir(outputDir, (err, files) => {
+        expect(err).to.be(null)
+        expect(files.length).to.equal(1)
+        fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
+          var subject = data.toString()
+
+          expect(err).to.be(null)
+          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/)
+          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'INSIDE', 789\)/)
+          expect(subject).to.not.match(currentDirectoryExp)
+          expect(runCode()).to.be('123\nwe made it\n')
+
+          return done()
+        })
+      })
+    })
+  })
+
   it('works with stubs', function (done) {
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_another_dep.js'),

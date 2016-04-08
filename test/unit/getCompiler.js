@@ -69,7 +69,7 @@ describe('compiler', function(){
     it('node conventions', function() {
       var result = doModuleCompile('./dependency')
 
-      expect(result).to.match(/Opal.modules\["dependency"\]/)
+      expect(result).to.match(/Opal.modules\[".\/dependency"\]/)
     })
   })
 
@@ -83,7 +83,7 @@ describe('compiler', function(){
     it('node conventions', function () {
       var result = doRequireCompile('require "./a_file"')
 
-      expect(result).to.match(/self.\$require\("a_file"\)/)
+      expect(result).to.match(/self.\$require\(".\/a_file"\)/)
     })
 
     it('standard require', function () {
