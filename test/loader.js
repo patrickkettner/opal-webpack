@@ -44,7 +44,6 @@ describe('Opal loader', function(){
     it('standard', function(done) {
       const callback = function (err, result) {
         expect(result).to.match(/require\('!!the_loader_path\?cacheIdentifier=.*&file=another_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
-        expect(result).to.not.match(/Opal.modules/)
         done()
       }
 
@@ -54,7 +53,6 @@ describe('Opal loader', function(){
     it('require relatives', function(done) {
       const callback = function (err, result) {
         expect(result).to.match(/require\('!!the_loader_path\?cacheIdentifier=.*&file=another_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
-        expect(result).to.not.match(/Opal.modules/)
         done()
       }
 
@@ -64,7 +62,6 @@ describe('Opal loader', function(){
     it('node convention', function(done) {
       const callback = function (err, result) {
         expect(result).to.match(/require\('!!the_loader_path\?cacheIdentifier=.*&file=\.%2Fanother_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
-        expect(result).to.not.match(/Opal.modules/)
         done()
       }
 
@@ -74,7 +71,6 @@ describe('Opal loader', function(){
     it('require_relatives node convention', function(done) {
       const callback = function (err, result) {
         expect(result).to.match(/require\('!!the_loader_path\?cacheIdentifier=.*&file=\.%2Fanother_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
-        expect(result).to.not.match(/Opal.modules/)
         done()
       }
 
@@ -91,7 +87,7 @@ describe('Opal loader', function(){
     })
   })
 
-  context('stubbed modules', function() {
+  describe('stubbed module declarations', function() {
     it('via require', function(done) {
       const callback = function (err, result) {
         expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
@@ -173,6 +169,68 @@ describe('Opal loader', function(){
       }
 
       callLoader(callback, 'require "another_dependency"', null, options)
+    })
+  })
+
+  describe('Opal require statements', function() {
+    it('node conventions', function (done) {
+      const callback = function (err, result) {
+        expect(result).to.match(/self.\$require\("a_file"\)/)
+        done()
+      }
+
+      const options = {
+        opal: {
+          stubs: ['a_file']
+        }
+      }
+
+      callLoader(callback, 'require "./a_file"', null, options)
+    })
+
+    it('standard require', function (done) {
+      const callback = function (err, result) {
+        expect(result).to.match(/self.\$require\("a_file"\)/)
+        done()
+      }
+
+      const options = {
+        opal: {
+          stubs: ['a_file']
+        }
+      }
+
+      callLoader(callback, 'require "a_file"', null, options)
+    })
+
+    it('require relative', function (done) {
+      const callback = function (err, result) {
+        expect(result).to.match(/self.\$require\("a_file"\)/)
+        done()
+      }
+
+      const options = {
+        opal: {
+          stubs: ['a_file']
+        }
+      }
+
+      callLoader(callback, 'require_relative "a_file"', null, options)
+    })
+
+    it('require relative with node conventions', function (done) {
+      const callback = function (err, result) {
+        expect(result).to.match(/self.\$require\("a_file"\)/)
+        done()
+      }
+
+      const options = {
+        opal: {
+          stubs: ['a_file']
+        }
+      }
+
+      callLoader(callback, 'require_relative "./a_file"', null, options)
     })
   })
 
