@@ -27,56 +27,35 @@ describe('compiler', function(){
     expect(result).to.match(/OPAL_CONFIG.*arity_check: true/)
   })
 
-context('requireable', function (done) {
-    it('standard', function(done) {
-      const callback = function (err, result) {
-        expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
-        expect(result).to.match(/Opal.modules\["dependency"\]/)
-        done()
-      }
+  describe('Opal module declarations', function () {
+    function doModuleCompile(filename) {
+      return doCompile(filename, 'HELLO=123', {
+        requirable: true,
+        file: filename
+      })
+    }
 
-      const queryOptions = {
-        requirable: true
-      }
+    it('standard', function() {
+      var result = doModuleCompile('dependency')
 
-      callLoader(callback, 'HELLO=123', queryOptions)
+      expect(result).to.match(/Opal.modules\["dependency"\]/)
     })
 
-    it('require_relative', function(done) {
-      const callback = function (err, result) {
-        expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
-        expect(result).to.match(/Opal.modules\["dependency\/foo"\]/)
-        done()
-      }
+    it('require_relative', function() {
+      var result = doModuleCompile('dependency/foo')
 
-      const queryOptions = {
-        requirable: true,
-        file: 'dependency/foo'
-      }
-
-      callLoader(callback, 'HELLO=123', queryOptions)
+      expect(result).to.match(/Opal.modules\["dependency\/foo"\]/)
     })
 
-    it('node conventions', function(done) {
-      const callback = function (err, result) {
-        expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
-        expect(result).to.match(/Opal.modules\["dependency"\]/)
-        done()
-      }
+    it('node conventions', function() {
+      var result = doModuleCompile('./dependency')
 
-      const queryOptions = {
-        requirable: true,
-        file: './dependency'
-      }
-
-      callLoader(callback, 'HELLO=123', queryOptions)
+      expect(result).to.match(/Opal.modules\["dependency\/foo"\]/)
     })
   })
 
-
   describe('Opal requires', function() {
-
-  it('node conventions', function (done) {
+    it('node conventions', function (done) {
       const callback = function (err, result) {
         expect(result).to.match(/self.\$require\("a_file"\)/)
         done()
