@@ -41,6 +41,15 @@ describe('compiler', function(){
       expect(result).to.match(/Opal.modules\["dependency"\]/)
     })
 
+    it('allows file directive from parent file/path to override', function() {
+      var result = doCompile('foo/dependency', 'HELLO=123', {
+        requirable: true,
+        file: 'dependency'
+      })
+
+      expect(result).to.match(/Opal.modules\["dependency"\]/)
+    })
+
     it('require_relative', function() {
       var result = doModuleCompile('dependency/foo')
 
