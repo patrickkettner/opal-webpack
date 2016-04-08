@@ -1,21 +1,31 @@
 'use strict'
 
-const assert = require('assert')
+const expect = require('expect.js')
 const Opal = require('../../lib/opal')
+const getCompiler = require('../../lib/getCompiler')
 
-describe('Opal compiler', function(){
-  it('should compile ruby source', function(){
-    var compiler = Opal.Opal.Compiler.$new('puts "Howdy #{1+2}"')
-
+describe('compiler', function(){
+  function doCompile(relativeFileName, source, options) {
+    const targetOptions = {
+      relativeFileName: relativeFileName
+    }
+    Object.assign(targetOptions, options)
+    const compiler = getCompiler(source, targetOptions)
     compiler.$compile()
+    return compiler.$result()
+  }
 
-    var result = compiler.$result()
+  it('raw compiler works', function(){
+    var result = doCompile('foo', 'puts "Howdy #{1+2}"')
 
-    assert.equal(typeof result, 'string')
-    assert.equal(result.length > 0, true)
+    expect(result).to.match(/self.\$puts\("Howdy " \+ \(\$rb_plus\(1, 2\)\)\)\n}\)/)
   })
 
-  it('passes on compiler options')
+  it('passes on compiler options', function() {
+    var result = doCompile('foo', 'HELLO=123', {arity_check: true})
+
+    expect(result).to.match(/OPAL_CONFIG.*arity_check: true/)
+  })
 
 context('requireable', function (done) {
     it('standard', function(done) {
