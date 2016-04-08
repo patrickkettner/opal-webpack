@@ -2,7 +2,7 @@
 
 const rimraf = require('rimraf')
 const assign = require('object-assign')
-const expect = require('expect.js')
+const expect = require('chai').expect
 const mkdirp = require('mkdirp')
 const fs = require('fs')
 const path = require('path')
@@ -15,7 +15,7 @@ RegExp.escape = function(s) {
 }
 
 describe('integration', function(){
-  const outputBaseDir = path.resolve(__dirname, 'output')
+  const outputBaseDir = path.resolve(__dirname, '../../tmp/output')
   const cacheDir = path.join(outputBaseDir, 'cache')
   const fixturesDir = path.resolve(__dirname, '../fixtures')
   const currentDirectoryExp = new RegExp(RegExp.escape(process.cwd()))
@@ -37,23 +37,23 @@ describe('integration', function(){
 
   function assertBasic(config, done) {
     webpack(config, (err, stats) => {
-      expect(err).to.be(null)
+      expect(err).to.be.null
       let errors = stats.compilation.errors
       if (errors.length > 0) {
         console.dir(errors[0].stack)
       }
-      expect(errors).to.be.empty()
+      expect(errors).to.be.empty
 
       fs.readdir(outputDir, (err, files) => {
-        expect(err).to.be(null)
-        expect(files.length).to.equal(1)
+        expect(err).to.be.null
+        expect(files).to.have.length(1)
         fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
           var subject = data.toString()
 
-          expect(err).to.be(null)
-          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/)
+          expect(err).to.be.null
+          expect(subject).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(runCode()).to.be('123\n')
+          expect(runCode()).to.eq('123\n')
 
           return done()
         })
@@ -68,7 +68,7 @@ describe('integration', function(){
 
   function runCode(otherArgs) {
     const args = otherArgs || ''
-    return execSync(`node -r ./tmp/opal.js ${args} ./test/integration/output/loader/0.loader.js 2>&1 || true`).toString()
+    return execSync(`node -r ./tmp/opal.js ${args} ${path.join(outputDir, '0.loader.js')} 2>&1 || true`).toString()
   }
 
   beforeEach(function (done) {
@@ -96,20 +96,20 @@ describe('integration', function(){
       entry: aFixture('entry_another_dep.js')
     })
     webpack(config, (err, stats) => {
-      expect(err).to.be(null)
-      expect(stats.compilation.errors).to.be.empty()
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
 
       fs.readdir(outputDir, (err, files) => {
-        expect(err).to.be(null)
-        expect(files.length).to.equal(1)
+        expect(err).to.be.null
+        expect(files).to.have.length(1)
         fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
           var subject = data.toString()
 
-          expect(err).to.be(null)
-          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/)
-          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'INSIDE', 789\)/)
+          expect(err).to.be.null
+          expect(subject).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
+          expect(subject).to.include('Opal.cdecl($scope, \'INSIDE\', 789)')
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(runCode()).to.be('123\nwe made it\n')
+          expect(runCode()).to.eq('123\nwe made it\n')
 
           return done()
         })
@@ -122,20 +122,20 @@ describe('integration', function(){
       entry: aFixture('entry_another_dep_node.js')
     })
     webpack(config, (err, stats) => {
-      expect(err).to.be(null)
-      expect(stats.compilation.errors).to.be.empty()
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
 
       fs.readdir(outputDir, (err, files) => {
-        expect(err).to.be(null)
-        expect(files.length).to.equal(1)
+        expect(err).to.be.null
+        expect(files).to.have.length(1)
         fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
           var subject = data.toString()
 
-          expect(err).to.be(null)
-          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/)
-          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'INSIDE', 789\)/)
+          expect(err).to.be.null
+          expect(subject).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
+          expect(subject).to.include('Opal.cdecl($scope, \'INSIDE\', 789)')
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(runCode()).to.be('123\nwe made it\n')
+          expect(runCode()).to.eq('123\nwe made it\n')
 
           return done()
         })
@@ -151,20 +151,20 @@ describe('integration', function(){
       }
     })
     webpack(config, (err, stats) => {
-      expect(err).to.be(null)
-      expect(stats.compilation.errors).to.be.empty()
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
 
       fs.readdir(outputDir, (err, files) => {
-        expect(err).to.be(null)
-        expect(files.length).to.equal(1)
+        expect(err).to.be.null
+        expect(files).to.have.length(1)
         fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
           var subject = data.toString()
 
-          expect(err).to.be(null)
-          expect(subject).to.not.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/)
-          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'INSIDE', 789\)/)
+          expect(err).to.be.null
+          expect(subject).to.not.include('Opal.cdecl($scope, \'HELLO\', 123)')
+          expect(subject).to.include('Opal.cdecl($scope, \'INSIDE\', 789)')
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(runCode()).to.be('we made it\n')
+          expect(runCode()).to.eq('we made it\n')
 
           return done()
         })
@@ -180,24 +180,24 @@ describe('integration', function(){
       }
     })
     webpack(config, (err, stats) => {
-      expect(err).to.be(null)
-      expect(stats.compilation.errors).to.be.empty()
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
 
       fs.readdir(outputDir, (err, files) => {
-        expect(err).to.be(null)
-        expect(files.length).to.equal(1)
+        expect(err).to.be.null
+        expect(files).to.have.length(1)
         fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
           var subject = data.toString()
 
-          expect(err).to.be(null)
-          expect(subject).to.not.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/)
-          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'INSIDE', 789\)/)
+          expect(err).to.be.null
+          expect(subject).to.not.include('Opal.cdecl($scope, \'HELLO\', 123)')
+          expect(subject).to.include('Opal.cdecl($scope, \'INSIDE\', 789)')
           expect(subject).to.not.match(currentDirectoryExp)
           // the stub
-          expect(subject).to.match(/Opal\.modules\["dependency"\]/)
-          expect(subject).to.match(/Opal\.modules\["another_dependency"\]/)
-          expect(subject).to.match(/Opal\.modules\["inside_load_path"\]/)
-          expect(runCode()).to.be('we made it\n')
+          expect(subject).to.include('Opal.modules["dependency"]')
+          expect(subject).to.include('Opal.modules["another_dependency"]')
+          expect(subject).to.include('Opal.modules["inside_load_path"]')
+          expect(runCode()).to.eq('we made it\n')
 
           return done()
         })
@@ -210,18 +210,18 @@ describe('integration', function(){
       entry: aFixture('entry_js_require.js')
     })
     webpack(config, (err, stats) => {
-      expect(err).to.be(null)
-      expect(stats.compilation.errors).to.be.empty()
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
 
       fs.readdir(outputDir, (err, files) => {
-        expect(err).to.be(null)
-        expect(files.length).to.equal(1)
+        expect(err).to.be.null
+        expect(files).to.have.length(1)
         fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
           var subject = data.toString()
 
-          expect(err).to.be(null)
+          expect(err).to.be.null
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(runCode()).to.be('howdy\nagain\n')
+          expect(runCode()).to.eq('howdy\nagain\n')
 
           return done()
         })
@@ -235,23 +235,23 @@ describe('integration', function(){
       entry: aFixture('entry_tree.js')
     })
     webpack(config, (err, stats) => {
-      expect(err).to.be(null)
-      expect(stats.compilation.errors).to.be.empty()
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
 
       fs.readdir(outputDir, (err, files) => {
-        expect(err).to.be(null)
-        expect(files.length).to.equal(1)
+        expect(err).to.be.null
+        expect(files).to.have.length(1)
         fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
           var subject = data.toString()
 
-          expect(err).to.be(null)
-          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/)
-          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'THERE', 456\)/)
+          expect(err).to.be.null
+          expect(subject).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
+          expect(subject).to.include('Opal.cdecl($scope, \'THERE\', 456)')
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(subject).to.match(/\$require_tree\("tree"\)/)
-          expect(subject).to.match(/Opal\.modules\["tree\/file1"\]/)
-          expect(subject).to.match(/Opal\.modules\["tree\/file2"\]/)
-          expect(runCode()).to.be('inside the tree\n')
+          expect(subject).to.include('$require_tree("tree")')
+          expect(subject).to.include('Opal.modules["tree/file1"]')
+          expect(subject).to.include('Opal.modules["tree/file2"]')
+          expect(runCode()).to.eq('inside the tree\n')
 
           return done()
         })
@@ -268,21 +268,21 @@ describe('integration', function(){
       entry: aFixture('entry_relative.js')
     })
     webpack(config, (err, stats) => {
-      expect(err).to.be(null)
-      expect(stats.compilation.errors).to.be.empty()
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
 
       fs.readdir(outputDir, (err, files) => {
-        expect(err).to.be(null)
-        expect(files.length).to.equal(1)
+        expect(err).to.be.null
+        expect(files).to.have.length(1)
         fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
           var subject = data.toString()
 
-          expect(err).to.be(null)
-          expect(subject).to.match(/Opal\.cdecl\(\$scope, 'HELLO', 123\)/)
+          expect(err).to.be.null
+          expect(subject).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
           // don't want paths hard coded to machines in here
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(subject).to.match(/Opal\.modules\["tree\/file1"\]/)
-          expect(runCode()).to.be('inside the tree\n')
+          expect(subject).to.include('Opal.modules["tree/file1"]')
+          expect(runCode()).to.eq('inside the tree\n')
 
           return done()
         })
@@ -298,17 +298,17 @@ describe('integration', function(){
       devtool: 'source-map'
     })
     webpack(config, (err, stats) => {
-      expect(err).to.be(null)
-      expect(stats.compilation.errors).to.be.empty()
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
 
       fs.readdir(outputDir, (err, files) => {
-        expect(err).to.be(null)
-        expect(files.length).to.equal(2)
+        expect(err).to.be.null
+        expect(files).to.have.length(2)
         var output = runCode('-r '+aFixture('load_source_maps.js'))
         // ruby output, might need some more work since we're 1 line off
         // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
-        expect(output).to.match(/test\/integration\/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
-        expect(output).to.match(/test\/integration\/output\/loader\/webpack:\/test\/fixtures\/source_maps.rb:7:1\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps.rb:7:1\)/)
         return done()
       })
     })
@@ -325,17 +325,17 @@ describe('integration', function(){
       }
     })
     webpack(config, (err, stats) => {
-      expect(err).to.be(null)
-      expect(stats.compilation.errors).to.be.empty()
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
 
       fs.readdir(outputDir, (err, files) => {
-        expect(err).to.be(null)
-        expect(files.length).to.equal(2)
+        expect(err).to.be.null
+        expect(files).to.have.length(2)
         var output = runCode('-r '+aFixture('load_source_maps.js'))
         // ruby output, might need some more work since we're 1 line off
         // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
-        expect(output).to.match(/test\/integration\/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs\.rb:6:1\)/)
-        expect(output).to.match(/test\/integration\/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs.rb:10:1\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs\.rb:6:1\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs.rb:10:1\)/)
         return done()
       })
     })
@@ -357,18 +357,18 @@ describe('integration', function(){
       }
     })
     webpack(config, (err, stats) => {
-      expect(err).to.be(null)
-      expect(stats.compilation.errors).to.be.empty()
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
 
       fs.readdir(outputDir, (err, files) => {
-        expect(err).to.be(null)
-        expect(files.length).to.equal(1)
+        expect(err).to.be.null
+        expect(files).to.have.length(1)
         fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
           var subject = data.toString()
 
-          expect(err).to.be(null)
+          expect(err).to.be.null
           expect(subject).to.not.match(currentDirectoryExp)
-          expect(runCode()).to.be('[Object#onearg] wrong number of arguments(0 for 1)\n[Object#two_arg] wrong number of arguments(1 for 2)\n')
+          expect(runCode()).to.eq('[Object#onearg] wrong number of arguments(0 for 1)\n[Object#two_arg] wrong number of arguments(1 for 2)\n')
 
           return done()
         })
@@ -382,9 +382,9 @@ describe('integration', function(){
     })
     webpack(config, (err, stats) => {
       let errors = stats.compilation.errors
-      expect(errors.length).to.be(1)
+      expect(errors).to.have.length(1)
       let error = errors[0]
-      expect(error).to.be.an(Error)
+      expect(error).to.be.an.instanceof(Error)
       expect(error.message).to.match(/Module build failed.*An error occurred while compiling:.*error[\s\S]+3:0/)
       return done()
     })
@@ -409,7 +409,7 @@ describe('integration', function(){
       // run again and use the cache
       assertBasic(config, () => {
         fs.readdir(cacheDir, (err, files) => {
-          expect(err).to.be(null)
+          expect(err).to.be.null
           expect(files).to.have.length(1)
           return done()
         })
@@ -433,11 +433,11 @@ describe('integration', function(){
       }
     })
     webpack(config, (err, stats) => {
-      expect(err).to.be(null)
-      expect(stats.compilation.errors).to.be.empty()
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
 
       fs.readdir(cacheDir, (err, files) => {
-        expect(err).to.be(null)
+        expect(err).to.be.null
         expect(files).to.have.length(3)
         return done()
       })
@@ -461,17 +461,17 @@ describe('integration', function(){
       }
     })
     webpack(config, (err, stats) => {
-      expect(err).to.be(null)
-      expect(stats.compilation.errors).to.be.empty()
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
 
       fs.readdir(outputDir, (err, files) => {
-        expect(err).to.be(null)
-        expect(files.length).to.equal(2)
+        expect(err).to.be.null
+        expect(files).to.have.length(2)
         var output = runCode('-r '+aFixture('load_source_maps.js'))
         // ruby output, might need some more work since we're 1 line off
         // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
-        expect(output).to.match(/test\/integration\/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
-        expect(output).to.match(/test\/integration\/output\/loader\/webpack:\/test\/fixtures\/source_maps.rb:7:1\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps.rb:7:1\)/)
         return done()
       })
     })

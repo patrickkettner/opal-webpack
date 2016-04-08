@@ -30,6 +30,6 @@ node_modules
 vendor/opal-compiler.js
 
 # test files
-test/integration/output
 test/fixtures/*.backup
 /tmp
+/test-results.xml

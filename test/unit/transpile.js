@@ -1,6 +1,6 @@
 'use strict'
 
-const expect = require('expect.js')
+const expect = require('chai').expect
 const transpile = require('../../lib/transpile')
 
 describe('transpile', function(){
@@ -20,23 +20,27 @@ describe('transpile', function(){
 
   it('compiles an endpoint', function() {
     var result = doTranspile('HELLO=123')
-    expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
-    expect(result).to.not.match(/Opal.modules/)
+
+    expect(result).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
+    expect(result).to.not.include('Opal.modules')
   })
 
   describe('webpack requires', function() {
     it('standard', function() {
       var result = doTranspile('require "another_dependency"')
+
       expect(result).to.match(/require\('!!the_loader_path\?file=another_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
     })
 
     it('node convention', function() {
       var result = doTranspile('require "./another_dependency"')
+
       expect(result).to.match(/require\('!!the_loader_path\?file=\.%2Fanother_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
     })
 
     it('JS require', function() {
       var result = doTranspile('require "pure_js"')
+
       expect(result).to.match(/require\('imports!.*test\/fixtures\/pure_js.js'\);/)
     })
   })
@@ -48,8 +52,8 @@ describe('transpile', function(){
       }
       var result = doTranspile('require "stubbed"; HELLO=123', options)
 
-      expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
-      expect(result).to.match(/Opal.modules\["stubbed"\]/)
+      expect(result).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
+      expect(result).to.include('Opal.modules["stubbed"]')
     })
 
     it('via require_relative', function() {
@@ -58,8 +62,8 @@ describe('transpile', function(){
       }
       var result = doTranspile('require_relative "stubbed"; HELLO=123', options)
 
-      expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
-      expect(result).to.match(/Opal.modules\["stubbed"\]/)
+      expect(result).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
+      expect(result).to.include('Opal.modules["stubbed"]')
     })
 
     it('via node conventions', function() {
@@ -69,26 +73,27 @@ describe('transpile', function(){
 
       var result = doTranspile('require "./stubbed"; HELLO=123', options)
 
-      expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
-      expect(result).to.match(/Opal.modules\["stubbed"\]/)
+      expect(result).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
+      expect(result).to.include('Opal.modules["stubbed"]')
     })
   })
 
   it('Opal require statements', function() {
     var result = doTranspile('require "another_dependency"')
-    expect(result).to.match(/self.\$require\("another_dependency"\)/)
+
+    expect(result).to.include('self.$require("another_dependency")')
   })
 
   it('passes on requirable', function() {
     var result = doTranspile('HELLO=123', {requirable: true}, '/stuff/foo.rb', 'foo.rb')
 
-    expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
-    expect(result).to.match(/Opal.modules\["foo"\]/)
+    expect(result).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
+    expect(result).to.include('Opal.modules["foo"]')
   })
 
   it('passes on compile options', function() {
-    var result = doTranspile('HELLO=123', {arity_check: true})
+    var result = doTranspile('def abc(hi); end;', {arity_check: true})
 
-    expect(result).to.match(/OPAL_CONFIG.*arity_check: true/)
+    expect(result).to.include('Opal.ac')
   })
 })
