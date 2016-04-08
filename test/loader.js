@@ -50,7 +50,7 @@ describe('Opal loader', function(){
       callLoader(callback, 'require "another_dependency"')
     })
 
-    it('require relatives', function(done) {
+    it('require relative', function(done) {
       const callback = function (err, result) {
         expect(result).to.match(/require\('!!the_loader_path\?cacheIdentifier=.*&file=another_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
         done()
@@ -68,7 +68,7 @@ describe('Opal loader', function(){
       callLoader(callback, 'require "./another_dependency"')
     })
 
-    it('require_relatives node convention', function(done) {
+    it('require_relative with leading dot', function(done) {
       const callback = function (err, result) {
         expect(result).to.match(/require\('!!the_loader_path\?cacheIdentifier=.*&file=\.%2Fanother_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
         done()
@@ -218,7 +218,7 @@ describe('Opal loader', function(){
       callLoader(callback, 'require_relative "a_file"', null, options)
     })
 
-    it('require relative with node conventions', function (done) {
+    it('require relative with leading dot', function (done) {
       const callback = function (err, result) {
         expect(result).to.match(/self.\$require\("a_file"\)/)
         done()
