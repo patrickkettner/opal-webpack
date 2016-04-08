@@ -9,13 +9,17 @@ const path = require('path')
 const webpack = require('webpack')
 const execSync = require('child_process').execSync
 const fsExtra = require('fs-extra')
+const Opal = require('../../lib/opal')
+const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
 
 RegExp.escape = function(s) {
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
 }
 
 describe('integration', function(){
-  const outputBaseDir = path.resolve(__dirname, '../../tmp/output')
+  const tmpDir = path.resolve(__dirname, '../../tmp')
+  const opalCompilerPath = path.resolve(__dirname, '../../vendor/opal-compiler.js')
+  const outputBaseDir = path.resolve(tmpDir, 'output')
   const cacheDir = path.join(outputBaseDir, 'cache')
   const fixturesDir = path.resolve(__dirname, '../fixtures')
   const currentDirectoryExp = new RegExp(RegExp.escape(process.cwd()))
@@ -61,14 +65,13 @@ describe('integration', function(){
     })
   }
 
-  beforeEach(function() {
-    fsExtra.mkdirpSync('./tmp')
-    execSync('ls ./tmp/opal.js 1>/dev/null 2>&1 || bundle exec opal -c -e "require \'opal\'" > ./tmp/opal.js')
+  beforeEach(function(done) {
+    fsExtra.mkdirp('./tmp', done)
   })
 
   function runCode(otherArgs) {
     const args = otherArgs || ''
-    return execSync(`node -r ./tmp/opal.js ${args} ${path.join(outputDir, '0.loader.js')} 2>&1 || true`).toString()
+    return execSync(`node -r ${opalCompilerPath} ${args} ${path.join(outputDir, '0.loader.js')} 2>&1 || true`).toString()
   }
 
   beforeEach(function (done) {
@@ -385,7 +388,13 @@ describe('integration', function(){
       expect(errors).to.have.length(1)
       let error = errors[0]
       expect(error).to.be.an.instanceof(Error)
-      expect(error.message).to.match(/Module build failed.*An error occurred while compiling:.*error[\s\S]+3:0/)
+      if (opalVersion.indexOf('0.9') != -1) {
+        expect(error.message).to.match(/Module build failed.*An error occurred while compiling:.*error[\s\S]+3:0/)
+      }
+      else {
+        // Opal 0.10 regression - https://github.com/opal/opal/pull/1426
+        expect(error.message).to.match(/Module build failed.*false/)
+      }
       return done()
     })
   })
