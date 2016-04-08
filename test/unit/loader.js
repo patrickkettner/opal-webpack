@@ -2,12 +2,11 @@
 
 const expect = require('expect.js')
 const queryString = require('querystring')
+const loader = require('../../index')
 
-// TODO: Organize test directory by unit/integration
 // TODO: Keep a few tests in here, but ultimately break this out and test functions/etc. separately
 describe('Opal loader', function(){
   // TODO: Set load paths
-  const loader = require('../../index')
   const dummyLoader = {
     path: 'the_loader_path'
   }

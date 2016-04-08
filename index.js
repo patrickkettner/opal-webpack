@@ -1,15 +1,11 @@
 'use strict'
 
-// allow watch unit testing more easily
-if (typeof Opal === 'undefined') {
-  require('./vendor/opal-compiler.js')
-}
-
 const loaderUtils = require('loader-utils')
 const fs = require('fs')
 const pkg = require('./package.json')
 const cache = require('./lib/fs-cache')
 const resolveFilename = require('./lib/resolveFilename')
+const Opal = require('./lib/opal')
 const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
 const transpile = require('./lib/transpile')
 
