@@ -3,6 +3,8 @@ machine:
     version: 4.3.2
   ruby:
     version: 2.2.4
+  environment:
+    MOCHA_FILE: $CIRCLE_TEST_REPORTS/test-results.xml
 
 dependencies:
   override:
