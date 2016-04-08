@@ -12,7 +12,7 @@ describe('transpile', function(){
     const targetOptions = {
       sourceRoot: process.cwd(),
       filename: filename || 'foo.rb',
-      relativeFileName: relativeFileName || 'foo.rb',
+      relativeFileName: relativeFileName || 'foo.rb'
     }
     Object.assign(targetOptions, options)
     return transpile(code, targetOptions, wpContext).code

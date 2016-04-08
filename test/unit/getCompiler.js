@@ -1,7 +1,6 @@
 'use strict'
 
 const expect = require('expect.js')
-const Opal = require('../../lib/opal')
 const getCompiler = require('../../lib/getCompiler')
 
 describe('compiler', function(){
@@ -27,12 +26,12 @@ describe('compiler', function(){
     expect(result).to.match(/OPAL_CONFIG.*arity_check: true/)
   })
 
-  it("does not erase filename from options since follow on code in transpile needs it", function() {
+  it('does not erase filename from options since follow on code in transpile needs it', function() {
     var options = {
       filename: '/stuff/junk.rb',
       relativeFileName: 'junk.rb'
     }
-    const compiler = getCompiler('HELLO=123', options)
+    getCompiler('HELLO=123', options)
 
     expect(options.filename).to.be('/stuff/junk.rb')
   })

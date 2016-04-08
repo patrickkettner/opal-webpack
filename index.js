@@ -1,7 +1,6 @@
 'use strict'
 
 const loaderUtils = require('loader-utils')
-const fs = require('fs')
 const pkg = require('./package.json')
 const cache = require('./lib/fs-cache')
 const resolveFilename = require('./lib/resolveFilename')
