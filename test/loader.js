@@ -40,88 +40,186 @@ describe('Opal loader', function(){
     callLoader(callback, 'HELLO=123')
   })
 
-  it('emits requires', function(done) {
-    const callback = function (err, result) {
-      expect(result).to.match(/require\('!!the_loader_path\?cacheIdentifier=.*&file=another_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
-      expect(result).to.not.match(/Opal.modules/)
-      done()
-    }
-
-    callLoader(callback, 'require "another_dependency"')
-  })
-
-  it('allows stubs', function(done) {
-    const callback = function (err, result) {
-      expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
-      expect(result).to.match(/Opal.modules\["stubbed"\]/)
-      done()
-    }
-
-    const options = {
-      opal: {
-        stubs: ['stubbed']
+  describe('webpack requires', function() {
+    it('standard', function(done) {
+      const callback = function (err, result) {
+        expect(result).to.match(/require\('!!the_loader_path\?cacheIdentifier=.*&file=another_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
+        expect(result).to.not.match(/Opal.modules/)
+        done()
       }
-    }
 
-    callLoader(callback, 'require "stubbed"; HELLO=123', null, options)
-  })
+      callLoader(callback, 'require "another_dependency"')
+    })
 
-  it('does not let compile state bleed over into stub compile state', function(done) {
-    const callback = function (err, result) {
-      expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
-      expect(result).to.match(/Opal.modules\["stubbed"\]/)
-      done()
-    }
-
-    const options = {
-      opal: {
-        stubs: ['stubbed']
+    it('require relatives', function(done) {
+      const callback = function (err, result) {
+        expect(result).to.match(/require\('!!the_loader_path\?cacheIdentifier=.*&file=another_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
+        expect(result).to.not.match(/Opal.modules/)
+        done()
       }
-    }
 
-    const queryOptions = {
-      file: 'foobar'
-    }
+      callLoader(callback, 'require_relative "another_dependency"')
+    })
 
-    callLoader(callback, 'require "stubbed"; HELLO=123', queryOptions, options)
-  })
-
-  it('does not pass stubs on via query', function(done) {
-    const callback = function (err, result) {
-      expect(result).to.not.match(/require\('!!the_loader_path.*?stubs.*'\);/)
-      done()
-    }
-
-    const options = {
-      opal: {
-        stubs: ['stubbed']
+    it('node convention', function(done) {
+      const callback = function (err, result) {
+        expect(result).to.match(/require\('!!the_loader_path\?cacheIdentifier=.*&file=\.%2Fanother_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
+        expect(result).to.not.match(/Opal.modules/)
+        done()
       }
-    }
 
-    callLoader(callback, 'require "another_dependency"', null, options)
+      callLoader(callback, 'require "./another_dependency"')
+    })
+
+    it('require_relatives node convention', function(done) {
+      const callback = function (err, result) {
+        expect(result).to.match(/require\('!!the_loader_path\?cacheIdentifier=.*&file=\.%2Fanother_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
+        expect(result).to.not.match(/Opal.modules/)
+        done()
+      }
+
+      callLoader(callback, 'require_relative "./another_dependency"')
+    })
+
+    it('JS require', function(done) {
+      const callback = function (err, result) {
+        expect(result).to.match(/require\('.*imports-loader\/index.js!.*test\/fixtures\/pure_js.js'\);/)
+        done()
+      }
+
+      callLoader(callback, 'require "pure_js"')
+    })
   })
 
-  it('obeys requireable', function(done) {
-    const callback = function (err, result) {
-      expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
-      expect(result).to.match(/Opal.modules\["dependency"\]/)
-      done()
-    }
+  context('stubbed modules', function() {
+    it('via require', function(done) {
+      const callback = function (err, result) {
+        expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
+        expect(result).to.match(/Opal.modules\["stubbed"\]/)
+        done()
+      }
 
-    const queryOptions = {
-      requirable: true
-    }
+      const options = {
+        opal: {
+          stubs: ['stubbed']
+        }
+      }
 
-    callLoader(callback, 'HELLO=123', queryOptions)
+      callLoader(callback, 'require "stubbed"; HELLO=123', null, options)
+    })
+
+    it('via require_relative', function(done) {
+      const callback = function (err, result) {
+        expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
+        expect(result).to.match(/Opal.modules\["stubbed"\]/)
+        done()
+      }
+
+      const options = {
+        opal: {
+          stubs: ['stubbed']
+        }
+      }
+
+      callLoader(callback, 'require_relative "stubbed"; HELLO=123', null, options)
+    })
+
+    it('via node conventions', function(done) {
+      const callback = function (err, result) {
+        expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
+        expect(result).to.match(/Opal.modules\["stubbed"\]/)
+        done()
+      }
+
+      const options = {
+        opal: {
+          stubs: ['stubbed']
+        }
+      }
+
+      callLoader(callback, 'require "./stubbed"; HELLO=123', null, options)
+    })
+
+    it('do not leak compile state', function(done) {
+      const callback = function (err, result) {
+        expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
+        expect(result).to.match(/Opal.modules\["stubbed"\]/)
+        done()
+      }
+
+      const options = {
+        opal: {
+          stubs: ['stubbed']
+        }
+      }
+
+      const queryOptions = {
+        file: 'foobar'
+      }
+
+      callLoader(callback, 'require "stubbed"; HELLO=123', queryOptions, options)
+    })
+
+    it('do not leak stub config itself', function(done) {
+      const callback = function (err, result) {
+        expect(result).to.not.match(/require\('!!the_loader_path.*?stubs.*'\);/)
+        done()
+      }
+
+      const options = {
+        opal: {
+          stubs: ['stubbed']
+        }
+      }
+
+      callLoader(callback, 'require "another_dependency"', null, options)
+    })
   })
 
-  it('handles a JS require', function(done) {
-    const callback = function (err, result) {
-      expect(result).to.match(/require\('.*imports-loader\/index.js!.*test\/fixtures\/pure_js.js'\);/)
-      done()
-    }
+  context('requireable', function (done) {
+    it('standard', function(done) {
+      const callback = function (err, result) {
+        expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
+        expect(result).to.match(/Opal.modules\["dependency"\]/)
+        done()
+      }
 
-    callLoader(callback, 'require "pure_js"')
+      const queryOptions = {
+        requirable: true
+      }
+
+      callLoader(callback, 'HELLO=123', queryOptions)
+    })
+
+    it('require_relative', function(done) {
+      const callback = function (err, result) {
+        expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
+        expect(result).to.match(/Opal.modules\["dependency\/foo"\]/)
+        done()
+      }
+
+      const queryOptions = {
+        requirable: true,
+        file: 'dependency/foo'
+      }
+
+      callLoader(callback, 'HELLO=123', queryOptions)
+    })
+
+    it('node conventions', function(done) {
+      const callback = function (err, result) {
+        expect(result).to.match(/Opal.cdecl\(\$scope, 'HELLO', 123\)/)
+        expect(result).to.match(/Opal.modules\["dependency"\]/)
+        done()
+      }
+
+      const queryOptions = {
+        requirable: true,
+        file: './dependency'
+      }
+
+      callLoader(callback, 'HELLO=123', queryOptions)
+    })
   })
 
   it('uses compile options', function(done) {
