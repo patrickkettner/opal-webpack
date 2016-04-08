@@ -27,6 +27,16 @@ describe('compiler', function(){
     expect(result).to.match(/OPAL_CONFIG.*arity_check: true/)
   })
 
+  it("does not erase filename from options since follow on code in transpile needs it", function() {
+    var options = {
+      filename: '/stuff/junk.rb',
+      relativeFileName: 'junk.rb'
+    }
+    const compiler = getCompiler('HELLO=123', options)
+
+    expect(options.filename).to.be('/stuff/junk.rb')
+  })
+
   describe('Opal module declarations', function () {
     function doModuleCompile(filename) {
       return doCompile(filename, 'HELLO=123', {
