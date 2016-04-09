@@ -12,6 +12,8 @@ const fsExtra = require('fs-extra')
 const Opal = require('../../lib/opal')
 const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
 const exec = require('child_process').exec
+const opalCompilerFilename = require('../../lib/getOpalCompilerFilename')
+const alternateCompilerTest = require('../support/alternateCompilerTest')
 
 RegExp.escape = function(s) {
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
@@ -73,13 +75,17 @@ describe('integration', function(){
 
   function runCode(otherArgs) {
     const args = otherArgs || ''
-    return execSync(`phantomjs ${path.resolve(__dirname, '../support/runPhantom.js')} ${args} ${path.resolve(outputDir, '0.loader.js')} 2>&1 || true`).toString()
+    const command = `phantomjs ${path.resolve(__dirname, '../support/runPhantom.js')} ${args} ${path.resolve(outputDir, '0.loader.js')} 2>&1 || true`
+    //console.log(`Running command: ${command}`)
+    return execSync(command).toString()
   }
 
   // the source-map-support plugin that load_source_maps.js loads makes it easy to test this on node
   function runSourceMapDependentCode() {
     const sourceMapFinder = aFixture('load_source_maps.js')
-    return execSync(`node -r ${sourceMapFinder} ${path.join(outputDir, '0.loader.js')} 2>&1 || true`).toString()
+    const command = `node -r ${sourceMapFinder} ${path.join(outputDir, '0.loader.js')} 2>&1 || true`
+    //console.log(`Running command: ${command}`)
+    return execSync(command).toString()
   }
 
   beforeEach(function (done) {
@@ -202,12 +208,41 @@ describe('integration', function(){
 
   // should behave like stubbing opal, opal/mini, opal/full, opal/base
   // separate from compilation
-  it('allows stubbing Opal requires so they can be provided outside webpack')
+  it('allows stubbing Opal requires so they can be provided outside webpack', function(done) {
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_basic.js'),
+      opal: {
+        externalOpal: true
+      }
+    })
+    webpack(config, (err) => {
+      if (err) { return done(err) }
+      expect(runCode(opalCompilerFilename)).to.eq('123\n\n')
 
-// should also stub opal but sub in a configured value instead of vendor/opal-compiler
-    // also rename opal-compiler.js to bundled-opal.js
-    // should behave like stubbing opal, opal/mini, opal/full, opal/base
-  it('allows using a statically provided Opal distro')
+      return done()
+    })
+  })
+
+  it('allows using a statically provided Opal distro', function(done) {
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_static_opal.js')
+    })
+
+    const code = "const webpack = require('webpack');\n" +
+    `const config = ${JSON.stringify(config)};\n` +
+    'config.module.loaders[0].test = /.rb/;\n' + // regex doesn't serialize to JSON well
+    'webpack(config, err => {' +
+    ' if (err) { process.exit(1) }' +
+    ' console.log("made it ok!")'+
+    '})'
+
+    alternateCompilerTest.execute(code, function(err, result) {
+      if (err) { return done(err) }
+      expect(result).to.include('made it ok!')
+      expect(runCode().trim()).to.eq('0.10.0.beta2.webpacktest')
+      return done()
+    })
+  })
 
 // should add Opal to the OPAL_LOAD_PATHS environment variable and
     // automatically use it

@@ -2,8 +2,8 @@
 
 const expect = require('chai').expect
 const transpile = require('../../lib/transpile')
-const path = require('path')
 const alternateCompilerTest = require('../support/alternateCompilerTest')
+const opalCompilerFilename = require('../../lib/getOpalCompilerFilename')
 
 describe('transpile', function(){
   const wpContext = {
@@ -20,7 +20,6 @@ describe('transpile', function(){
     return transpile(code, targetOptions, wpContext).code
   }
 
-
   it('compiles an endpoint', function() {
     var result = doTranspile('HELLO=123')
 
@@ -31,7 +30,7 @@ describe('transpile', function(){
   it('passes bundled opal through', function() {
     var result = doTranspile('the code',
                              {},
-                             path.resolve(__dirname, '../../vendor/opal-compiler.js'),
+                             opalCompilerFilename,
                              'opal-compiler.js')
     expect(result).to.eq('process = undefined;\nthe code')
   })
@@ -101,10 +100,33 @@ describe('transpile', function(){
         })
       })
 
+      function runOpalRequireTest(ruby, expectedMatch, done) {
+        const code = `var transpile = require('lib/transpile');\n`+
+            `console.log(transpile('${ruby}', {filename: '/foo.rb', relativeFileName: 'foo.rb'}, {path: 'the_loader_path'}).code);`
+
+        alternateCompilerTest.execute(code, function(err, result) {
+          if (err) { return done(err) }
+          expect(result).to.match(expectedMatch)
+          return done()
+        })
+      }
+
       context('using custom file redirects requires for', function() {
-        it('opal')
-        it('opal/full')
-        it('opal/mini')
+        it('opal', function(done) {
+          runOpalRequireTest('require "opal"',
+            /require\('!!the_loader_path\?file=opal&requirable=false!.*tweakedOpalCompiler.js'\);/,
+            done)
+        })
+        it('opal/full', function(done) {
+          runOpalRequireTest('require "opal/full"',
+            /require\('!!the_loader_path\?file=opal%2Ffull&requirable=false!.*tweakedOpalCompiler.js'\);/,
+            done)
+        })
+        it('opal/mini', function(done) {
+          runOpalRequireTest('require "opal/mini"',
+            /require\('!!the_loader_path\?file=opal%2Fmini&requirable=false!.*tweakedOpalCompiler.js'\);/,
+            done)
+        })
       })
     })
 
