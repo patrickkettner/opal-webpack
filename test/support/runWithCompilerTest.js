@@ -5,7 +5,7 @@ const path = require('path')
 
 const compilerAbsolutePath = path.resolve(__dirname, '../support/tweakedOpalCompiler.js')
 
-function runTestAgainstOtherFile(code, callback) {
+function runTestAgainstOtherFile(code, callback, compilerType) {
   tmp.file({
     dir: process.env.TMP
   },
@@ -21,10 +21,18 @@ function runTestAgainstOtherFile(code, callback) {
         path.resolve(__dirname, '../../node_modules')
       ]
 
-      const environment = Object.assign(process.env, {
-        OPAL_COMPILER_PATH: compilerAbsolutePath,
+      const environment = Object.assign({}, process.env)
+      Object.assign(environment, {
         NODE_PATH: nodePaths.join(':')
       })
+
+      if (compilerType === 'tweaked') {
+        environment.OPAL_COMPILER_PATH = compilerAbsolutePath
+      }
+      else {
+        // test consistency
+        delete environment.OPAL_COMPILER_PATH
+      }
 
       const nodeBinary = path.join(process.env.NVM_BIN, 'node')
       exec(`${nodeBinary} ${tmpPath}`, {

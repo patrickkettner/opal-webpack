@@ -13,7 +13,8 @@ const Opal = require('../../lib/opal')
 const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
 const exec = require('child_process').exec
 const opalCompilerFilename = require('../../lib/getOpalCompilerFilename')
-const alternateCompilerTest = require('../support/alternateCompilerTest')
+const runWithCompilerTest = require('../support/runWithCompilerTest')
+const bundlerCompilerTest = require('../support/bundlerCompilerTest')
 
 RegExp.escape = function(s) {
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
@@ -202,12 +203,6 @@ describe('integration', function(){
     })
   })
 
-  // can change the build process to build 2 files, a regular opal build and
-  // then the compiler in a separate file
-  it('the bundled opal version does not include compilation in the webpack bundle')
-
-  // should behave like stubbing opal, opal/mini, opal/full, opal/base
-  // separate from compilation
   it('allows stubbing Opal requires so they can be provided outside webpack', function(done) {
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_basic.js'),
@@ -223,30 +218,47 @@ describe('integration', function(){
     })
   })
 
-  it('allows using a statically provided Opal distro', function(done) {
-    const config = assign({}, globalConfig, {
-      entry: aFixture('entry_static_opal.js')
-    })
-
-    const code = "const webpack = require('webpack');\n" +
+  function codeForSeparateProcessWebpackRun(config) {
+    return "const webpack = require('webpack');\n" +
     `const config = ${JSON.stringify(config)};\n` +
     'config.module.loaders[0].test = /.rb/;\n' + // regex doesn't serialize to JSON well
     'webpack(config, err => {' +
     ' if (err) { process.exit(1) }' +
     ' console.log("made it ok!")'+
     '})'
+  }
 
-    alternateCompilerTest.execute(code, function(err, result) {
+  it('allows using a statically provided Opal distro', function(done) {
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_static_opal.js')
+    })
+
+    const code = codeForSeparateProcessWebpackRun(config)
+
+    runWithCompilerTest.execute(code, function(err, result) {
       if (err) { return done(err) }
       expect(result).to.include('made it ok!')
       expect(runCode().trim()).to.eq('0.10.0.beta2.webpacktest')
       return done()
-    })
+    }, 'tweaked')
   })
 
-// should add Opal to the OPAL_LOAD_PATHS environment variable and
-    // automatically use it
-  it('allows using a bundler provided Opal distro')
+  it('allows using a bundler provided Opal distro', function (done) {
+    this.timeout(20000)
+
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_bundler_opal.js')
+    })
+
+    const code = codeForSeparateProcessWebpackRun(config)
+
+    bundlerCompilerTest.execute(code, function(err, result) {
+      if (err) { return done(err) }
+      expect(result).to.include('made it ok!')
+      expect(runCode().trim()).to.eq('howdy')
+      return done()
+    })
+  })
 
   it('allows stub inside require', function(done) {
     const config = assign({}, globalConfig, {
