@@ -18,7 +18,7 @@ RegExp.escape = function(s) {
 }
 
 describe('integration', function(){
-  this.timeout(10000)
+  this.timeout(20000)
   beforeEach(cleanScopeAndRequire)
 
   const tmpDir = path.resolve(__dirname, '../../tmp')
@@ -242,7 +242,7 @@ describe('integration', function(){
   it('allows using bundler for compilation/dependencies', function (done) {
     process.env.OPAL_USE_BUNDLER = 'true'
 
-    this.timeout(30000)
+    this.timeout(60000)
 
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_bundler_opal.js')
