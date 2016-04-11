@@ -18,7 +18,7 @@ RegExp.escape = function(s) {
 }
 
 describe('integration', function(){
-  this.timeout(20000)
+  this.timeout(40000)
   beforeEach(cleanScopeAndRequire)
 
   const tmpDir = path.resolve(__dirname, '../../tmp')
@@ -117,8 +117,6 @@ describe('integration', function(){
 
   // not an end to end test, but since it's a bit slower, put here instead of unit test
   it('matches our bundler test version', function(done) {
-    this.timeout(5000) // time for shell execute
-
     const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
 
     exec('opal -e "puts RUBY_ENGINE_VERSION"', function(err, stdout) {
@@ -228,6 +226,7 @@ describe('integration', function(){
     if (execSync('opal -v').toString().trim().indexOf('0.10') != -1) {
       // some issues with 0.10 and opal-browser
       this.skip()
+      return done()
     }
 
     process.env.OPAL_MRI_REQUIRES = 'opal-browser'
@@ -282,7 +281,10 @@ describe('integration', function(){
   })
 
   it('allows Bundler for dependencies with an external opal', function (done) {
-    this.timeout(20000)
+    if (execSync('opal -v').toString().trim().indexOf('0.10') != -1) {
+      // some issues with 0.10 and opal-browser
+      this.skip()
+    }
 
     process.env.OPAL_USE_BUNDLER = 'true'
 
@@ -303,8 +305,6 @@ describe('integration', function(){
 
   it('allows using a bundler provided Opal distro with mini', function (done) {
     process.env.OPAL_USE_BUNDLER = 'true'
-
-    this.timeout(20000)
 
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_bundler_mini.js')
