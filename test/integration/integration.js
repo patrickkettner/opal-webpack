@@ -9,12 +9,9 @@ const path = require('path')
 const webpack = require('webpack')
 const execSync = require('child_process').execSync
 const fsExtra = require('fs-extra')
-const Opal = require('../../lib/opal')
-const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
 const exec = require('child_process').exec
-const opalCompilerFilename = require('../../lib/getOpalCompilerFilename')
-const runWithCompilerTest = require('../support/runWithCompilerTest')
-const bundlerCompilerTest = require('../support/bundlerCompilerTest')
+
+const cleanScopeAndRequire = require('../support/cleanScopeAndRequire')
 
 RegExp.escape = function(s) {
   return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
@@ -22,6 +19,7 @@ RegExp.escape = function(s) {
 
 describe('integration', function(){
   this.timeout(10000)
+  beforeEach(cleanScopeAndRequire)
 
   const tmpDir = path.resolve(__dirname, '../../tmp')
   const outputBaseDir = path.resolve(tmpDir, 'output')
@@ -42,6 +40,14 @@ describe('integration', function(){
     module: {
       loaders: [{ test: /\.rb$/, loader: opalLoader }]
     }
+  }
+
+  function useTweakedCompiler() {
+    process.env.OPAL_COMPILER_PATH = path.resolve(__dirname, '../support/tweakedOpalCompiler.js')
+  }
+
+  function getOpalCompilerFilename() {
+    return require('../../lib/getOpalCompilerFilename')()
   }
 
   function assertBasic(config, done) {
@@ -212,50 +218,77 @@ describe('integration', function(){
     })
     webpack(config, (err) => {
       if (err) { return done(err) }
-      expect(runCode(opalCompilerFilename)).to.eq('123\n\n')
+      expect(runCode(getOpalCompilerFilename())).to.eq('123\n\n')
 
       return done()
     })
   })
 
-  function codeForSeparateProcessWebpackRun(config) {
-    return "const webpack = require('webpack');\n" +
-    `const config = ${JSON.stringify(config)};\n` +
-    'config.module.loaders[0].test = /.rb/;\n' + // regex doesn't serialize to JSON well
-    'webpack(config, err => {' +
-    ' if (err) { process.exit(1) }' +
-    ' console.log("made it ok!")'+
-    '})'
-  }
-
   it('allows using a statically provided Opal distro', function(done) {
+    useTweakedCompiler()
+
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_static_opal.js')
     })
 
-    const code = codeForSeparateProcessWebpackRun(config)
-
-    runWithCompilerTest.execute(code, function(err, result) {
+    webpack(config, (err) => {
       if (err) { return done(err) }
-      expect(result).to.include('made it ok!')
       expect(runCode().trim()).to.eq('0.10.0.beta2.webpacktest')
+
       return done()
-    }, 'tweaked')
+    })
   })
 
-  it('allows using a bundler provided Opal distro', function (done) {
-    this.timeout(20000)
+  it('allows using bundler for compilation/dependencies', function (done) {
+    process.env.OPAL_USE_BUNDLER = 'true'
+
+    this.timeout(30000)
 
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_bundler_opal.js')
     })
 
-    const code = codeForSeparateProcessWebpackRun(config)
-
-    bundlerCompilerTest.execute(code, function(err, result) {
+    webpack(config, (err) => {
       if (err) { return done(err) }
-      expect(result).to.include('made it ok!')
+      expect(runCode().trim()).to.eq('0.2.0')
+
+      return done()
+    })
+  })
+
+  it('allows Bundler for dependencies with an external opal', function (done) {
+    this.timeout(20000)
+
+    process.env.OPAL_USE_BUNDLER = 'true'
+
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_bundler_opal.js'),
+      opal: {
+        externalOpal: true
+      }
+    })
+
+    webpack(config, (err) => {
+      if (err) { return done(err) }
+      expect(runCode(getOpalCompilerFilename()).trim()).to.eq('0.2.0')
+
+      return done()
+    })
+  })
+
+  it('allows using a bundler provided Opal distro with mini', function (done) {
+    process.env.OPAL_USE_BUNDLER = 'true'
+
+    this.timeout(20000)
+
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_bundler_mini.js')
+    })
+
+    webpack(config, (err) => {
+      if (err) { return done(err) }
       expect(runCode().trim()).to.eq('howdy')
+
       return done()
     })
   })
@@ -461,6 +494,7 @@ describe('integration', function(){
   })
 
   it('handles errors', function (done) {
+    const opalVersion = require('../../lib/opal').get('RUBY_ENGINE_VERSION')
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_error.js')
     })
