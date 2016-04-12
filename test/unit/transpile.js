@@ -193,6 +193,13 @@ describe('transpile', function(){
 
       expect(result).to.match(/require\('.*test\/fixtures\/pure_js.js'\);/)
     })
+
+    it('require_tree', function() {
+      var result = doTranspile('require_tree "tree"', {}, path.resolve(__dirname, '../fixtures/tree.rb'), 'tree.rb')
+
+      expect(result).to.match(/require\('!!the_loader_path\?file=tree%2Ffile1\.rb&requirable=true!.*tree\/file1\.rb'\)/)
+      expect(result).to.match(/require\('!!the_loader_path\?file=tree%2Ffile2\.rb&requirable=true!.*tree\/file2\.rb'\)/)
+    })
   })
 
   describe('stubbed module declarations', function() {
@@ -228,10 +235,30 @@ describe('transpile', function(){
     })
   })
 
-  it('Opal require statements', function() {
-    var result = doTranspile('require "another_dependency"')
+  describe('Opal require statements', function() {
+    it('standard', function() {
+      var result = doTranspile('require "another_dependency"')
 
-    expect(result).to.include('self.$require("another_dependency")')
+      expect(result).to.include('self.$require("another_dependency")')
+    })
+
+    it('relative', function() {
+      var result = doTranspile('require_relative "another_dependency"')
+
+      expect(result).to.include('self.$require("foo"+ \'/../\' + "another_dependency")')
+    })
+
+    it('tree', function() {
+      var result = doTranspile('require_tree "tree"', {}, path.resolve(__dirname, '../fixtures/tree.rb'), 'tree.rb')
+
+      expect(result).to.include('self.$require_tree("tree")')
+    })
+
+    it('tree with relative path', function() {
+      var result = doTranspile('require_tree "./tree"', {}, path.resolve(__dirname, '../fixtures/tree.rb'), 'tree.rb')
+
+      expect(result).to.include('self.$require_tree("tree")')
+    })
   })
 
   it('passes on requirable', function() {

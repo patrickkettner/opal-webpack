@@ -19,7 +19,7 @@ describe('resolveFilename', function(){
   }
 
   it('uses Bundler load paths if Bundler is running', function() {
-    this.timeout(6000)
+    this.timeout(12000)
 
     const result = bundlerResolve('opal-browser')
 

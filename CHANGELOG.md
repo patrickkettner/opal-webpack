@@ -1,5 +1,7 @@
-MASTER:
+# MASTER:
+* Fixed issue with require_tree (#5)
 
+# v1.0.0:
 * By default, require 'opal' includes bundled opal in this package, you are discouraged from mixing this compiler with your own runtime
 * File caching between runs
 * Supports passing stubs in via global options
@@ -11,7 +13,9 @@ MASTER:
 * Better test coverage
 * Removal Babel compilation (can assume code running under Node has es6 covered)
 
-# v1.0.0
+# Previous project (opalrb-loader)
+
+# v0.1.0
 * Upgrade to Opal 0.9.2 [#2](https://github.com/cj/opalrb-loader/issues/2).
 * Opal compiler bundled is now minified.
 

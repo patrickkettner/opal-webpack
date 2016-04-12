@@ -19,6 +19,12 @@ describe('getWebpackRequire', function(){
     expect(result).to.eq('require(\'!!the_loader?file=opal&requirable=false!/the/path/opal\');')
   })
 
+  it('deals with require_tree files', function() {
+    var result = getWebpackRequire(context, {}, 'path/file1.rb', '/the/path/file1.rb')
+
+    expect(result).to.eq('require(\'!!the_loader?file=path%2Ffile1.rb&requirable=true!/the/path/file1.rb\');')
+  })
+
   it('does not pass on requireable for "opal/mini"', function() {
     var result = getWebpackRequire(context, {}, 'opal/mini', '/the/path/opal/mini')
     expect(result).to.eq('require(\'!!the_loader?file=opal%2Fmini&requirable=false!/the/path/opal/mini\');')

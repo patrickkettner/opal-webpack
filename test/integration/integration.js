@@ -1,4 +1,5 @@
 'use strict'
+/*jshint expr: true*/
 
 const rimraf = require('rimraf')
 const assign = require('object-assign')
@@ -390,19 +391,18 @@ describe('integration', function(){
     })
   })
 
-  // TODO: Several opal bugs with File.dirname and Path.join that keep this from working
-  xit('loads require_tree', function (done) {
+  it('loads require_tree', function (done) {
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_tree.js')
     })
-    webpack(config, (err, stats) => {
+    webpack(config, function (err, stats) {
       expect(err).to.be.null
       expect(stats.compilation.errors).to.be.empty
 
-      fs.readdir(outputDir, (err, files) => {
+      fs.readdir(outputDir, function (err, files) {
         expect(err).to.be.null
         expect(files).to.have.length(1)
-        fs.readFile(path.resolve(outputDir, files[0]), (err, data) => {
+        fs.readFile(path.resolve(outputDir, files[0]), function (err, data) {
           var subject = data.toString()
 
           expect(err).to.be.null
@@ -412,7 +412,7 @@ describe('integration', function(){
           expect(subject).to.include('$require_tree("tree")')
           expect(subject).to.include('Opal.modules["tree/file1"]')
           expect(subject).to.include('Opal.modules["tree/file2"]')
-          expect(runCode()).to.eq('inside the tree\n')
+          expect(runCode()).to.eq('inside the tree\n\n')
 
           return done()
         })
@@ -420,8 +420,33 @@ describe('integration', function(){
     })
   })
 
-  xit('loads require_tree without leading dot', function () {
-    // should be same result as loads require_tree
+  it('loads require_tree without leading dot', function (done) {
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_tree_no_dot.js')
+    })
+    webpack(config, function (err, stats) {
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
+
+      fs.readdir(outputDir, function (err, files) {
+        expect(err).to.be.null
+        expect(files).to.have.length(1)
+        fs.readFile(path.resolve(outputDir, files[0]), function (err, data) {
+          var subject = data.toString()
+
+          expect(err).to.be.null
+          expect(subject).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
+          expect(subject).to.include('Opal.cdecl($scope, \'THERE\', 456)')
+          expect(subject).to.not.match(currentDirectoryExp)
+          expect(subject).to.include('$require_tree("tree")')
+          expect(subject).to.include('Opal.modules["tree/file1"]')
+          expect(subject).to.include('Opal.modules["tree/file2"]')
+          expect(runCode()).to.eq('inside the tree\n\n')
+
+          return done()
+        })
+      })
+    })
   })
 
   it('loads require_relative', function (done) {
