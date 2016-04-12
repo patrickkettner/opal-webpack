@@ -1,6 +1,6 @@
 {
   "name": "opal-webpack",
-  "version": "0.10.0-beta2",
+  "version": "1.0.0",
   "description": "Opal Ruby module loader for webpack",
   "main": "index.js",
   "files": [
