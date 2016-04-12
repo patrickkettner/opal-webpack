@@ -1,4 +1,4 @@
-# opalrb-loader
+# opal-webpack
 > Opal is a compiler for writing JavaScript in Ruby.
 
 This package allows transpiling Ruby files using [Opal](http://opalrb.org) and [webpack](https://github.com/webpack/webpack).
@@ -96,7 +96,7 @@ a reference to the module.
 
 ### Load path
 
-Currently, the loader does not use webpack's `moduleDirectories` for finding assets that you `require` in Opal.
+Currently, the loader does not use webpack's `moduleDirectories` for finding assets that you `require` in Opal. See [this issue](https://github.com/cj/opal-webpack/issues/7).
 
 By default, if you run webpack in a Bundler context (e.g. `bundle exec webpack...`), the loader will issue a `Bundler.require` call and add all the load paths that any Opal GEMS use to the webpack load path. If you use Rails, set the `RAILS_ENV` environment variable before running webpack and the loader will start up that Rails environment and grab the load paths from there.
 
