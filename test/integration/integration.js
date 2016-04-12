@@ -178,6 +178,21 @@ describe('integration', function(){
     })
   })
 
+  it('allows requiring node modules from Opal', function (done) {
+    process.env.OPAL_LOAD_PATH = `./node_modules:${process.env.OPAL_LOAD_PATH}`
+
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_node_from_opal.js')
+    })
+    webpack(config, (err, stats) => {
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
+
+      expect(runCode()).to.eq('  foo\n\n')
+      return done()
+    })
+  })
+
   it('works with stubs', function (done) {
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_another_dep.js'),

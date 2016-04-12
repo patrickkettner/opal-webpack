@@ -81,6 +81,19 @@ module: {
 
 With your Ruby/Opal `require` statements, you can either use the Sprockets/Ruby/Opal convention or you can use the node convention of `require './some_file'`, which will be relative to path of the file doing the require. If you do this though, you **must** consistently require the file that way. A require to 'some_file' will include the module a second time.
 
+If you want to use a Node based asset within Opal, you'll have to do this:
+
+```ruby
+`var leftpad = require('left-pad')`
+
+result = `leftpad('foo', 5)`
+
+puts result
+```
+
+Since Ruby require does not return a value for the module the way that node requires do, this is the only way you can get
+a reference to the module.
+
 ### Load path
 
 Currently, the loader does not use webpack's `moduleDirectories` for finding assets that you `require` in Opal.

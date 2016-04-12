@@ -40,6 +40,13 @@ module.exports = function (done) {
     env.BUNDLE_BIN_ORIG = env.BUNDLE_BIN
   }
 
+  if (env.OPAL_LOAD_PATH_ORIG) {
+    env.OPAL_LOAD_PATH = env.OPAL_LOAD_PATH_ORIG
+  }
+  else {
+    env.OPAL_LOAD_PATH_ORIG = env.OPAL_LOAD_PATH
+  }
+
   delete env.RAILS_ENV
 
   const vendorPath = path.resolve(__dirname, '../../vendor')
