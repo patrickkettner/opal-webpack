@@ -9,6 +9,7 @@ Check out [this blog post](https://medium.com/@zetachang/from-sprockets-to-webpa
 [![npm downloads](https://img.shields.io/npm/dt/opal-webpack.svg?style=flat-square)](https://www.npmjs.com/package/opal-webpack)
 [![Quality](http://img.shields.io/codeclimate/github/cj/opal-webpack.svg?style=flat-square)](https://codeclimate.com/github/cj/opal-webpack)
 [![Build Status](http://img.shields.io/travis/cj/opal-webpack/master.svg?style=flat)](http://travis-ci.org/cj/opal-webpack)
+[![Join the chat at https://gitter.im/cj/opal-webpack](https://badges.gitter.im/cj/opal-webpack.svg)](https://gitter.im/cj/opal-webpack?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Installation
 
