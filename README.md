@@ -189,7 +189,7 @@ Here are some details about options 2-4:
 }
 ```
 
-Then you'll have assets compiled with the version of Opal that you have in your `Gemfile` and webpack can focus on leaner assets that don't change. `externalOpal` basically is equivalent to stubbing `['opal', 'opal/mini', 'opal/full']`. That way any requires in your code will not cause the full Opal library to be included in your bundle.
+Then you'll have assets compiled with the version of Opal that you have in your `Gemfile` and webpack can focus on leaner assets that don't change. `externalOpal` basically is equivalent to stubbing `['opal', 'opal/mini', 'opal/full']`. That way any `require 'opal'` statements in your code will not cause the full Opal library to be included in your bundle.
 
 #### A compiler+runtime you provide the location to
 
