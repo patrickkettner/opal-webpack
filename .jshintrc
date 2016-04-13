@@ -1,0 +1,14 @@
+{
+  "esnext": true,
+  "asi": true,
+  "strict": true,
+  "node": true,
+  "globals": {
+    "it": true,
+    "describe": true,
+    "context": true,
+    "beforeEach": true,
+    "afterEach": true,
+    "Opal": true
+  }
+}

@@ -1,3 +1,5 @@
+'use strict'
+
 const path = require('path')
 const glob = require('glob')
 
@@ -32,6 +34,8 @@ module.exports = function (done) {
   env.OPAL_USE_BUNDLER = 'false'
   delete env.OPAL_COMPILER_PATH
   delete env.OPAL_MRI_REQUIRES
+  delete env.OPAL_COMPILER_REQUIRES
+  delete env.OPAL_COMPILER_LOAD_PATH
 
   if (env.BUNDLE_BIN_ORIG) {
     env.BUNDLE_BIN = env.BUNDLE_BIN_ORIG
