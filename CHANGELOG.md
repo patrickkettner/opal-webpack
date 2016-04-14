@@ -1,4 +1,7 @@
 # MASTER:
+* Unstub the `$inject` method on Node to keep the compiler from breaking Karma
+
+# v1.0.1:
 * Fixed issue with require_tree (#5)
 
 # v1.0.0:

@@ -1,9 +1,8 @@
 'use strict'
 
 const path = require('path')
-const glob = require('glob')
 
-module.exports = function (done) {
+module.exports = function () {
   // Opal touches these globals
   const opalBridges = [String, Number, Boolean, Date, Array, Error, RegExp, Function]
   opalBridges.forEach(function (bridge) { delete bridge.$$bridge })
@@ -53,15 +52,16 @@ module.exports = function (done) {
 
   delete env.RAILS_ENV
 
-  const vendorPath = path.resolve(__dirname, '../../vendor')
+  const removeReqs = []
+  for (var reqFile in require.cache) {
+    if (/opal-compiler-v.*js/.test(reqFile)) {
+      removeReqs.push(reqFile)
+    }
+  }
 
-  glob(path.join(vendorPath, '**/opal-compiler-v*.js'), {}, function(err, files) {
-    if (err) { return done(err) }
-    files.forEach(function(file) {
-      // recreating this messes up mocha watch
-      //fs.unlinkSync(file)
-      delete require.cache[file]
-    })
-    return done()
+  removeReqs.forEach(function(file) {
+    // recreating this messes up mocha watch
+    //fs.unlinkSync(file)
+    delete require.cache[file]
   })
 }
