@@ -43,6 +43,8 @@ This is all you need to get started with a basic setup. No installation of Opal 
 
 See `Opal::Compiler` [options](https://github.com/opal/opal/blob/master/lib/opal/compiler.rb) for possible options.
 
+Query options (see webpack docs) will apply to specific loader configs (each 'test', loader, etc.).
+
 ```javascript
 // webpack.config.js
 module: {
@@ -59,7 +61,7 @@ module: {
 }
 ```
 
-You can also supply global options that apply to any Opal loaded file, not just a single test:
+You can also supply global options that apply to any Opal loaded file, not just a single 'test':
 
 ```javascript
 // webpack.config.js
