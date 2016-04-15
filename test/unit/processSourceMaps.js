@@ -43,7 +43,10 @@ describe('processSourceMaps', function(){
     })
     expect(sourcePosition.line).to.eq(2)
     expect(sourcePosition.column).to.eq(0)
-    //expect(sourcePosition.name).to.eq('hello')
+    // no names before 0.10
+    if (opalVersionFetcher.isOpal010()) {
+      expect(sourcePosition.name).to.eq('hello')
+    }
   })
 
   it('with requires prepended', function() {
@@ -66,6 +69,9 @@ describe('processSourceMaps', function(){
     })
     expect(sourcePosition.line).to.eq(2)
     expect(sourcePosition.column).to.eq(0)
-    //expect(sourcePosition.name).to.eq('hello')
+    // no names before 0.10
+    if (opalVersionFetcher.isOpal010()) {
+      expect(sourcePosition.name).to.eq('hello')
+    }
   })
 })
