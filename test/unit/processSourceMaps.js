@@ -1,4 +1,5 @@
 'use strict'
+/*jshint expr:true */
 
 const expect = require('chai').expect
 const cleanScopeAndRequire = require('../support/cleanScopeAndRequire')
@@ -46,8 +47,8 @@ describe('processSourceMaps', function(){
   }
 
   function getOriginalInfo(results, blurb, column) {
-     const smc = new SourceMapConsumer(results.map)
-     return smc.originalPositionFor({
+    const smc = new SourceMapConsumer(results.map)
+    return smc.originalPositionFor({
       line: getCompiledLineNumber(results, blurb),
       column: column
     })
