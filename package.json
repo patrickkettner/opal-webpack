@@ -9,7 +9,7 @@
     "vendor"
   ],
   "scripts": {
-    "build_compiler": "opal --no-exit -Ilib -c lib/compiler.rb | uglifyjs > vendor/opal-compiler.js",
+    "build_compiler": "opal --no-exit --no-opal -Ilib -c lib/compiler.rb | uglifyjs > vendor/opal-compiler.js",
     "test": "npm run test_only -- test/unit test/integration",
     "test_only": "PATH=test/support:$PATH OPAL_USE_BUNDLER=false OPAL_LOAD_PATH=./test/fixtures:./test/fixtures/load_path mocha",
     "prepare": "npm run build_compiler",
@@ -45,7 +45,6 @@
     "chai": "^3.5.0",
     "eslint": "^2.7.0",
     "fs-extra": "^0.26.7",
-    "glob": "^5.0.15",
     "jshint": "^2.9.1",
     "left-pad": "^1.0.1",
     "mocha": "^2.4.5",
