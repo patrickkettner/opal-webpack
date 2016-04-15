@@ -498,6 +498,28 @@ describe('integration', function(){
     })
   })
 
+  it('outputs correct nested source maps', function (done) {
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_source_maps_nested.js'),
+      devtool: 'source-map'
+    })
+    webpack(config, (err, stats) => {
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
+
+      fs.readdir(outputDir, (err, files) => {
+        expect(err).to.be.null
+        expect(files).to.have.length(2)
+        var output = runSourceMapDependentCode()
+        // ruby output, might need some more work since we're 1 line off
+        // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
+        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps.rb:7:1\)/)
+        return done()
+      })
+    })
+  })
+
   it('outputs correct source maps when stubs are used', function (done) {
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_source_maps_stubs.js'),
