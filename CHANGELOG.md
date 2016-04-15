@@ -1,5 +1,8 @@
-# v1.0.2:
+# v1.0.3:
 * Unstub the `$inject` method on Node to keep the compiler from breaking Karma
+
+# v1.0.2:
+* NPM publish error
 
 # v1.0.1:
 * Fixed issue with require_tree (#5)
