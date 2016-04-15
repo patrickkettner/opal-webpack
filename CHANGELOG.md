@@ -1,3 +1,6 @@
+# v1.0.4:
+* Fix issue with source maps being 1 line off
+
 # v1.0.3:
 * Unstub the `$inject` method on Node to keep the compiler from breaking Karma
 

@@ -489,9 +489,7 @@ describe('integration', function(){
         expect(err).to.be.null
         expect(files).to.have.length(2)
         var output = runSourceMapDependentCode()
-        // ruby output, might need some more work since we're 1 line off
-        // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
-        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:4:3\)/)
         expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps.rb:7:1\)/)
         return done()
       })
@@ -511,9 +509,7 @@ describe('integration', function(){
         expect(err).to.be.null
         expect(files).to.have.length(2)
         var output = runSourceMapDependentCode()
-        // ruby output, might need some more work since we're 1 line off
-        // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
-        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:4:3\)/)
         expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps.rb:7:1\)/)
         return done()
       })
@@ -536,9 +532,7 @@ describe('integration', function(){
         expect(err).to.be.null
         expect(files).to.have.length(2)
         var output = runSourceMapDependentCode()
-        // ruby output, might need some more work since we're 1 line off
-        // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
-        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs\.rb:7:1\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs\.rb:8:3\)/)
         expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps_stubs.rb:11:1\)/)
         return done()
       })
@@ -683,9 +677,7 @@ describe('integration', function(){
         expect(err).to.be.null
         expect(files).to.have.length(2)
         var output = runSourceMapDependentCode()
-        // ruby output, might need some more work since we're 1 line off
-        // expecting test/fixtures/source_maps.rb:4:in `hello': source map location (RuntimeError)
-        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:3:1\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:4:3\)/)
         expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps.rb:7:1\)/)
         return done()
       })
