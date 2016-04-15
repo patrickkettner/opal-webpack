@@ -149,7 +149,7 @@ between invocations of webpack.
 
 ### Opal version
 
-By default, When you `require 'opal'` in any asset, this loader will use the version of Opal bundled with this tool. This is meant to get you started but not meant to cover all use cases (for example, opal/mini, opal/full are not supported).
+By default, When you `require 'opal'` in any asset, this loader will use the version of Opal bundled with this tool (0.10 master from Git as of this writing). This is meant to get you started but not meant to cover all use cases (for example, opal/mini, opal/full are not supported).
 
 Here are the options you have for choosing which compiler/runtime you wish to use:
 

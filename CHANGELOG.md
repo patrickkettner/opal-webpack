@@ -1,4 +1,4 @@
-# MASTER:
+# v1.0.2:
 * Unstub the `$inject` method on Node to keep the compiler from breaking Karma
 
 # v1.0.1:
