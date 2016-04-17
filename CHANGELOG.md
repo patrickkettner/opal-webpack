@@ -1,3 +1,6 @@
+# v1.0.6:
+* Use Rails full asset paths (which will include sprockets and opal-rails dependencies)
+
 # v1.0.5:
 * Don't leave cached file in place if Bundler based compiler build fails
 * Fix issue with Bundler compilation if run from dependent project

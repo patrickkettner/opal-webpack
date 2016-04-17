@@ -10,4 +10,4 @@ if [ "$RAILS_ENV" != 'foobar' ]
   exit 1
 fi
 
-ruby -e "require 'opal-browser'; ${@:2}"
+ruby -Itest/support -e "require 'rails_mock'; ${@:2}"
