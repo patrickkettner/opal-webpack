@@ -100,7 +100,7 @@ a reference to the module.
 
 Currently, the loader does not use webpack's `moduleDirectories` for finding assets that you `require` in Opal. See [this issue](https://github.com/cj/opal-webpack/issues/7).
 
-By default, if you run webpack in a Bundler context (e.g. `bundle exec webpack...`), the loader will issue a `Bundler.require` call and add all the load paths that any Opal GEMS use to the webpack load path. If you use Rails, set the `RAILS_ENV` environment variable before running webpack and the loader will start up that Rails environment and grab the load paths from there.
+By default, if you run webpack in a Bundler context (e.g. `bundle exec webpack...`), the loader will issue a `Bundler.require` call and add all the load paths that any Opal GEMS use to the webpack load path. If you use Rails, set the `RAILS_ENV` environment variable before running webpack and the loader will start up that Rails environment and grab Sprockets load paths (including paths that tools like opal-rails have added).
 
 If you don't use Bundler or wish to supply additional MRI requires, set the `OPAL_MRI_REQUIRES` environment variable to a colon separated list of Ruby `require` clauses. E.g. `OPAL_MRI_REQUIRES=opal-browser:opal-builder`
 
