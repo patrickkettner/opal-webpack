@@ -35,13 +35,13 @@
   "dependencies": {
     "bundle-loader": "^0.5.4",
     "exports-loader": "^0.6.2",
-    "glob": "^5.0.14",
     "imports-loader": "^0.6.4",
     "loader-utils": "^0.2.11",
     "source-map": "^0.4.4",
     "mkdirp": "^0.5.1"
   },
   "devDependencies": {
+    "glob": "^5.0.14",
     "chai": "^3.5.0",
     "eslint": "^2.7.0",
     "fs-extra": "^0.26.7",

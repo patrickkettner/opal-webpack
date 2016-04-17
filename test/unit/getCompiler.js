@@ -1,7 +1,9 @@
 'use strict'
+/*jshint expr: true*/
 
 const expect = require('chai').expect
 const path = require('path')
+const glob = require('glob')
 
 const cleanScopeAndRequire = require('../support/cleanScopeAndRequire')
 const execSync = require('child_process').execSync
@@ -98,6 +100,23 @@ describe('compiler', function(){
     }
   })
 
+  it('does not leave dangling file if additional Bundler require fails', function(done) {
+    this.timeout(20000)
+
+    // need to override for this test
+    cleanBundlerCompilers()
+
+    const env = process.env
+    env.OPAL_USE_BUNDLER = 'true'
+    env.OPAL_COMPILER_REQUIRES = 'test/fixtures/non_existent_file'
+    env.OPAL_COMPILER_LOAD_PATH = '.'
+
+    expect(function() { doCompile('foo', 'puts "Howdy #{1+2}"') }).to.throw(Error)
+    glob(path.resolve(__dirname, '../../vendor/opal-compiler-v*.js'), function(err, files) {
+      expect(files).to.be.empty
+      done()
+    })
+  })
 
   it('allows a multiple additional requires for Bundler compiler', function() {
     this.timeout(20000)
