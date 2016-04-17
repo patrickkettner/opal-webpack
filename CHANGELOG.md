@@ -1,3 +1,7 @@
+# v1.0.5:
+* Don't leave cached file in place if Bundler based compiler build fails
+* Fix issue with Bundler compilation if run from dependent project
+
 # v1.0.4:
 * Fix issue with source maps being 1 line off
 
