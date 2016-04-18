@@ -6,6 +6,8 @@ const expect = require('chai').expect
 const cleanScopeAndRequire = require('../support/cleanScopeAndRequire')
 
 describe('getRubyMetadata', function(){
+  this.timeout(12000) // bundler examples might take more time
+
   beforeEach(cleanScopeAndRequire)
   const env = process.env
 
@@ -23,8 +25,6 @@ describe('getRubyMetadata', function(){
   }
 
   it('Bundler is running', function() {
-    this.timeout(12000)
-
     const result = bundlerGetMetadata()
     const loadPath = result.loadPath
 
