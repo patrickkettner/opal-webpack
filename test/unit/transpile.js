@@ -207,7 +207,7 @@ describe('transpile', function(){
       expect(result).to.match(/require\('.*test\/fixtures\/pure_js.js'\);/)
     })
 
-    it('require_tree', function() {
+    it.only('require_tree', function() {
       var result = doTranspile('require_tree "tree"', {}, path.resolve(__dirname, '../fixtures/tree.rb'), 'tree.rb')
 
       expect(result).to.match(/require\('!!the_loader_path\?file=tree%2Ffile1\.rb&requirable=true!.*tree\/file1\.rb'\)/)

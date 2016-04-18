@@ -21,8 +21,7 @@ describe('compiler', function(){
     }
     Object.assign(targetOptions, options)
     const compiler = getCompiler(source, targetOptions)
-    compiler.$compile()
-    return compiler.$result()
+    return compiler.$to_s()
   }
 
   function cleanBundlerCompilers() {
