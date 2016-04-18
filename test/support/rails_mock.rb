@@ -1,6 +1,6 @@
 class AssetsMock
   def paths
-    require 'opal-browser'
+    require 'rails_dependency'
     Opal.paths
   end
 end

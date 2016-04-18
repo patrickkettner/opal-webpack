@@ -13,7 +13,8 @@ module.exports = function () {
     'getCompiler',
     'opal',
     'bundlerCheck',
-    'getLoadPaths',
+    'getRubyMetadata',
+    'getOpalVersion',
     'getStub',
     'resolveFilename',
     'transpile'
@@ -36,11 +37,18 @@ module.exports = function () {
   delete env.OPAL_COMPILER_REQUIRES
   delete env.OPAL_COMPILER_LOAD_PATH
 
-  if (env.BUNDLE_BIN_ORIG) {
-    env.BUNDLE_BIN = env.BUNDLE_BIN_ORIG
+  if (env.RUBYOPT_ORIG) {
+    env.RUBYOPT = env.RUBYOPT_ORIG
   }
   else {
-    env.BUNDLE_BIN_ORIG = env.BUNDLE_BIN
+    env.RUBYOPT_ORIG = env.RUBYOPT
+  }
+
+  if (env.RUBYLIB_ORIG) {
+    env.RUBYLIB = env.RUBYLIB_ORIG
+  }
+  else {
+    env.RUBYLIB_ORIG = env.RUBYLIB
   }
 
   if (env.OPAL_LOAD_PATH_ORIG) {

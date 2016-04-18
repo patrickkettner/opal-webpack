@@ -126,6 +126,11 @@ To tell the Opal compiler to stub out certain dependencies, do this
 }
 ```
 
+The loader will also pull in any stubbed files from Opal GEMs automatically when:
+* the `OPAL_MRI_REQUIRES` environment variable is set
+* webpack is run in a Bundler context
+* webpack is run with the RAILS_ENV environment variable set
+
 ### Caching
 
 Just like the Babel loader, you can cache compilation results on the filesystem to improve load times
