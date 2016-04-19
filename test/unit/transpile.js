@@ -16,7 +16,7 @@ describe('transpile', function(){
   }
 
   function getOpalCompilerFilename() {
-    return require('../../lib/getOpalCompilerFilename')()
+    return require('../../lib/getOpalCompilerFilename')
   }
 
   function transpile(code, targetOptions, context) {

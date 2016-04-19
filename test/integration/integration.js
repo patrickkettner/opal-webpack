@@ -49,7 +49,7 @@ describe('integration', function(){
   }
 
   function getOpalCompilerFilename() {
-    return require('../../lib/getOpalCompilerFilename')()
+    return require('../../lib/getOpalCompilerFilename')
   }
 
   function assertBasic(config, done) {
