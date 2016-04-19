@@ -1,5 +1,5 @@
-# https://github.com/opal/opal/pull/1426
-# https://github.com/opal/opal/issues/1427
+# https://github.com/opal/opal/pull/1426 - fixed in 0.10
+# https://github.com/opal/opal/issues/1427 - fixed in 0.10
 begin
   Opal::Compiler.new('def problem', {}).compile
 rescue Exception => e

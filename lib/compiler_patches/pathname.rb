@@ -19,7 +19,6 @@ class Pathname
       raise ArgumentError if @path == "\0"
     end
 
-    # https://github.com/opal/opal/pull/1430
     # https://github.com/opal/opal/pull/1430 - included in Opal 0.10
     def absolute?
       !relative?
@@ -34,7 +33,7 @@ class Pathname
       path == ''
     end
 
-    # https://github.com/opal/opal/pull/1430
+    # https://github.com/opal/opal/pull/1430 - included in Opal 0.10
     def chop_basename(path) # :nodoc:
       base = File.basename(path)
       # ruby uses /^#{SEPARATOR_PAT}?$/o but having issues with interpolation
@@ -174,6 +173,7 @@ class Pathname
     alias === ==
   end
 
+  # not yet in 0.10
   unless Pathname.method_defined?(:relative_path_from)
     SAME_PATHS = if File::FNM_SYSCASE.nonzero?
       # Avoid #zero? here because #casecmp can return nil.

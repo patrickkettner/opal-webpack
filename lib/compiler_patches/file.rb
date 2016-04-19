@@ -1,12 +1,12 @@
 class File
   # Backports from opal 0.10, in O.9, dirname comes back as an array for this case
-  # https://github.com/opal/opal/pull/1429
+  # dirname fixed in 0.10 - https://github.com/opal/opal/pull/1429
   result = File.dirname('stuff')
   unless result.is_a?(String) && result == '.' && File.method_defined?(:basename) && File.method_defined?(:extname)
     @__fs__ = node_require :fs
     `var __fs__ = #{@__fs__}`
 
-    # https://github.com/opal/opal/commit/a0d07f82ffc745e208a509c28a415b914af8c435
+    # Fixed in 0.10 - https://github.com/opal/opal/commit/a0d07f82ffc745e208a509c28a415b914af8c435
     def initialize(path, flags)
       binary_flag_regexp = /b/
       encoding_flag_regexp = /:(.*)/
@@ -266,6 +266,7 @@ class File
   end
 end
 
+# Fixed in 0.10 already
 unless File.const_defined?('Stat')
   class File::Stat
     @__fs__ = node_require :fs
