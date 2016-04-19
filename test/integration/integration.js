@@ -21,6 +21,7 @@ RegExp.escape = function(s) {
 describe('integration', function(){
   this.timeout(40000)
   beforeEach(cleanScopeAndRequire)
+  const env = process.env
 
   const tmpDir = path.resolve(__dirname, '../../tmp')
   const outputBaseDir = path.resolve(tmpDir, 'output')
@@ -44,7 +45,7 @@ describe('integration', function(){
   }
 
   function useTweakedCompiler() {
-    process.env.OPAL_COMPILER_PATH = path.resolve(__dirname, '../support/tweakedOpalCompiler.js')
+    env.OPAL_COMPILER_PATH = path.resolve(__dirname, '../support/tweakedOpalCompiler.js')
   }
 
   function getOpalCompilerFilename() {
@@ -180,7 +181,7 @@ describe('integration', function(){
   })
 
   it('allows requiring node modules from Opal', function (done) {
-    process.env.OPAL_LOAD_PATH = `./node_modules:${process.env.OPAL_LOAD_PATH}`
+    env.OPAL_LOAD_PATH = `./node_modules:${env.OPAL_LOAD_PATH}`
 
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_node_from_opal.js')
@@ -223,6 +224,22 @@ describe('integration', function(){
     })
   })
 
+  it('pulls stubs from Opal gems', function(done) {
+    env.OPAL_MRI_REQUIRES = 'additional_require'
+    env.RUBYLIB = env.RUBYLIB + ':test/support'
+
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_gem_stub.js')
+    })
+
+    webpack(config, (err, stats) => {
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
+      expect(runCode()).to.eq('made it past stub\n\n')
+      return done()
+    })
+  })
+
   it('allows stubbing Opal requires so they can be provided outside webpack', function(done) {
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_basic.js'),
@@ -245,7 +262,7 @@ describe('integration', function(){
       return done()
     }
 
-    process.env.OPAL_MRI_REQUIRES = 'opal-browser'
+    env.OPAL_MRI_REQUIRES = 'opal-browser'
 
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_bundler_opal.js')
@@ -280,7 +297,7 @@ describe('integration', function(){
       this.skip()
     }
 
-    process.env.OPAL_USE_BUNDLER = 'true'
+    env.OPAL_USE_BUNDLER = 'true'
 
     this.timeout(60000)
 
@@ -302,7 +319,7 @@ describe('integration', function(){
       this.skip()
     }
 
-    process.env.OPAL_USE_BUNDLER = 'true'
+    env.OPAL_USE_BUNDLER = 'true'
 
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_bundler_opal.js'),
@@ -320,7 +337,7 @@ describe('integration', function(){
   })
 
   it('allows using a bundler provided Opal distro with mini', function (done) {
-    process.env.OPAL_USE_BUNDLER = 'true'
+    env.OPAL_USE_BUNDLER = 'true'
 
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_bundler_mini.js')
