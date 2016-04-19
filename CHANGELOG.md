@@ -1,5 +1,6 @@
 # MASTER:
 * Any files that Opal GEMs stub are now stubbed in the loader when using Bunder, Rails, or additional MRI requires
+* Use Opal's Builder class for compilation, which should address several issues (#12, #27)
 
 # v1.0.6:
 * Use Rails full asset paths (which will include sprockets and opal-rails dependencies)
