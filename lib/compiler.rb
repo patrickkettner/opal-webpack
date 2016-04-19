@@ -3,6 +3,7 @@ require 'corelib/runtime'
 require 'compiler_patches/stubs'
 # Now we can safely do this
 require 'opal'
+require 'compiler_patches/disable_warnings'
 require 'opal-source-maps'
 require 'opal/builder'
 require 'nodejs'
