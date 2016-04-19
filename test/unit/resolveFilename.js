@@ -31,12 +31,14 @@ describe('resolveFilename', function(){
   })
 
   it('resolves corelib/runtime as a JS file in Bundler mode', function() {
+    this.timeout(12000)
+
     const result = bundlerResolve('corelib/runtime')
 
     expect(result).to.match(/gems\/opal.*corelib\/runtime.js/)
   })
 
-  it('resolves the Opal compiler in non bundler mode', function() {
+  it('resolves the Opal runtime in non bundler mode', function() {
     const result = resolveFilename('opal')
 
     expect(result).to.eq(path.resolve(__dirname, '../../vendor/opal-runtime.js'))
