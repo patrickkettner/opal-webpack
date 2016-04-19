@@ -10,7 +10,7 @@ describe('resolveFilename', function(){
 
   function resolveFilename(filename) {
     const targetOptions = {
-      relativeFileName: filename
+      file: filename
     }
     const compiler = require('../../lib/getCompiler')('', targetOptions)
     const func = require('../../lib/resolveFilename')

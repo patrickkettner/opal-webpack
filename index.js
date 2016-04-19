@@ -1,9 +1,10 @@
 'use strict'
 
 const loaderUtils = require('loader-utils')
+const path = require('path')
+
 const pkg = require('./package.json')
 const cache = require('./lib/fs-cache')
-const resolveFilename = require('./lib/resolveFilename')
 const Opal = require('./lib/opal')
 const opalVersion = Opal.get('RUBY_ENGINE_VERSION')
 const transpile = require('./lib/transpile')
@@ -15,16 +16,14 @@ function getCurrentLoader(loaderContext) {
 module.exports = function(source) {
   var result = {}
 
-  const webpackRemainingChain = loaderUtils.getRemainingRequest(this).split('!')
-  const filename = webpackRemainingChain[webpackRemainingChain.length - 1]
+  const filename = this.resourcePath
   const globalOptions = this.options.opal || {}
   const loaderOptions = loaderUtils.parseQuery(this.query)
   const userOptions = Object.assign({}, globalOptions, loaderOptions)
-  const relativeFileName = resolveFilename(filename).relative
   const defaultOptions = {
     sourceRoot: process.cwd(),
     filename: filename,
-    relativeFileName: relativeFileName,
+    file: path.relative(this.context, filename),
     // expire cache when this package or Opal changes
     cacheIdentifier: JSON.stringify({
       'opal-loader': pkg.version,

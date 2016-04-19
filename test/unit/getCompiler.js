@@ -17,7 +17,7 @@ describe('compiler', function(){
 
   function doCompile(relativeFileName, source, options) {
     const targetOptions = {
-      relativeFileName: relativeFileName
+      file: relativeFileName
     }
     Object.assign(targetOptions, options)
     const compiler = getCompiler(source, targetOptions)
@@ -179,7 +179,7 @@ describe('compiler', function(){
   it('does not erase filename from options since follow on code in transpile needs it', function() {
     var options = {
       filename: '/stuff/junk.rb',
-      relativeFileName: 'junk.rb'
+      file: 'junk'
     }
     getCompiler('HELLO=123', options)
 

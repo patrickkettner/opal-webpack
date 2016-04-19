@@ -22,7 +22,7 @@ describe('processSourceMaps', function(){
   function getSourceMap(ruby, prepend) {
     prepend = prepend || []
     const targetOptions = {
-      relativeFileName: 'foo.rb'
+      file: 'foo.rb'
     }
     const compiler = getCompiler(ruby, targetOptions)
     const result = compiler.$to_s()

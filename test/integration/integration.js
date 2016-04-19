@@ -46,10 +46,11 @@ describe('integration', function(){
 
   function useTweakedCompiler() {
     env.OPAL_COMPILER_PATH = path.resolve(__dirname, '../support/tweakedOpalCompiler.js')
+    env.OPAL_RUNTIME_PATH = path.resolve(__dirname, '../support/tweakedOpalRuntime.js')
   }
 
-  function getOpalCompilerFilename() {
-    return require('../../lib/getOpalCompilerFilename')
+  function getOpalRuntimeFilename() {
+    return require('../../lib/getOpalRuntimeFilename')
   }
 
   function assertBasic(config, done) {
@@ -154,9 +155,9 @@ describe('integration', function(){
     })
   })
 
-  it('loads requires with node conventions', function (done){
+  it('loads require_relatives', function (done){
     const config = assign({}, globalConfig, {
-      entry: aFixture('entry_another_dep_node.js')
+      entry: aFixture('entry_another_dep_relative.js')
     })
     webpack(config, (err, stats) => {
       expect(err).to.be.null
@@ -249,7 +250,7 @@ describe('integration', function(){
     })
     webpack(config, (err) => {
       if (err) { return done(err) }
-      expect(runCode(getOpalCompilerFilename())).to.eq('123\n\n')
+      expect(runCode(getOpalRuntimeFilename())).to.eq('123\n\n')
 
       return done()
     })
@@ -330,7 +331,7 @@ describe('integration', function(){
 
     webpack(config, (err) => {
       if (err) { return done(err) }
-      expect(runCode(getOpalCompilerFilename()).trim()).to.eq('0.2.0')
+      expect(runCode(getOpalRuntimeFilename()).trim()).to.eq('0.2.0')
 
       return done()
     })
