@@ -1,7 +1,7 @@
 # Backports from opal 0.10, in O.9, dirname comes back as an array for this case
 # https://github.com/opal/opal/pull/1429
 result = File.dirname('stuff')
-unless result.is_a?(String) && result == '.'
+unless result.is_a?(String) && result == '.' && File.method_defined?(:basename) && File.method_defined?(:extname)
   class File
     class << self
       %x{
@@ -215,5 +215,12 @@ unless result.is_a?(String) && result == '.'
         (last_dot_idx.nil? || last_dot_idx + 1 == filename.length - 1) ? '' : filename[(last_dot_idx + 1)..-1]
       end
     end
+  end
+end
+
+unless File.const_defined?('FNM_SYSCASE')
+  class File
+    # case insenstive filesysem??
+    FNM_SYSCASE = 0
   end
 end

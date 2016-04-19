@@ -1,0 +1,3 @@
+test/support/tweaked*.js
+test/fixtures/source_maps_nested.js
+lib/fs-cache.js

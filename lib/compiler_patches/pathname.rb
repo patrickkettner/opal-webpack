@@ -1,6 +1,6 @@
-# Backports from opal 0.10
-unless Pathname.method_defined?(:+) && Pathname.method_defined?(:join) && Pathname('.').join('./tree').to_s == 'tree'
-  class Pathname
+class Pathname
+  # Backports from opal 0.10
+  unless Pathname.method_defined?(:+) && Pathname.method_defined?(:join) && Pathname('.').join('./tree').to_s == 'tree'
     SEPARATOR_PAT = /#{Regexp.quote File::SEPARATOR}/
 
     # https://github.com/opal/opal/pull/1430
@@ -106,11 +106,9 @@ unless Pathname.method_defined?(:+) && Pathname.method_defined?(:join) && Pathna
       self + result
     end
   end
-end
 
-# Fixed in Opal 0.10
-if `Opal.normalize === undefined`
-  class Pathname
+  # Fixed in Opal 0.10
+  if `Opal.normalize === undefined`
     def cleanpath
       %x{
         var path = #@path;
@@ -133,23 +131,48 @@ if `Opal.normalize === undefined`
       }
     end
   end
-end
 
-unless Pathname.method_defined?(:entries)
-  class Pathname
+  unless Pathname.method_defined?(:entries)
     def entries
       Dir.entries(@path).map {|f| self.class.new(f) }
     end
   end
-end
 
-unless Pathname.method_defined?(:relative_path_from)
-  class File
-    # case insenstive filesysem??
-    FNM_SYSCASE = 0
+  # these methods were all implemented togther in 0.10
+  unless Pathname.method_defined?(:expand_path)
+    def expand_path
+      File.expand_path @path
+    end
+
+    def split
+      [ dirname, basename ]
+    end
+
+    def dirname
+      Pathname.new(File.dirname(@path))
+    end
+
+    def basename
+      Pathname.new(File.basename(@path))
+    end
+
+    def directory?
+      File.directory?(@path)
+    end
+
+    def extname
+      File.extname(@path)
+    end
+
+    def <=>(other)
+      `self.path > other.path ? 1 : (self.path < other.path ? -1 : 0)`
+    end
+
+    alias eql? ==
+    alias === ==
   end
 
-  class Pathname
+  unless Pathname.method_defined?(:relative_path_from)
     SAME_PATHS = if File::FNM_SYSCASE.nonzero?
       # Avoid #zero? here because #casecmp can return nil.
       proc {|a, b| a.casecmp(b) == 0}

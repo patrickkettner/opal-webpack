@@ -71,9 +71,9 @@ module.exports = function () {
     }
   }
 
-  for (var reqFile in require.cache) {
-    if (/opal-runtime-v.*js/.test(reqFile)) {
-      removeReqs.push(reqFile)
+  for (var runtimeReqFile in require.cache) {
+    if (/opal-runtime-v.*js/.test(runtimeReqFile)) {
+      removeReqs.push(runtimeReqFile)
     }
   }
 
