@@ -110,7 +110,7 @@ describe('integration', function(){
     fsExtra.copy(dependencyBackup, dependencyMain, {clobber: true}, done)
   })
 
-  it('loads basic files', function (done) {
+  it.only('loads basic files', function (done) {
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_basic.js')
     })
