@@ -3,7 +3,7 @@ class Pathname
   unless Pathname.method_defined?(:+) && Pathname.method_defined?(:join) && Pathname('.').join('./tree').to_s == 'tree'
     SEPARATOR_PAT = /#{Regexp.quote File::SEPARATOR}/
 
-    # https://github.com/opal/opal/pull/1430
+    # https://github.com/opal/opal/pull/1430 - included in Opal 0.10
     def initialize(path)
       if Pathname === path
         @path = path.path.to_s
@@ -20,11 +20,12 @@ class Pathname
     end
 
     # https://github.com/opal/opal/pull/1430
+    # https://github.com/opal/opal/pull/1430 - included in Opal 0.10
     def absolute?
       !relative?
     end
 
-    # https://github.com/opal/opal/pull/1430
+    # https://github.com/opal/opal/pull/1430 - included in Opal 0.10
     def relative?
       path = @path
       while r = chop_basename(path)
@@ -44,13 +45,13 @@ class Pathname
       end
     end
 
-    # https://github.com/opal/opal/pull/1430
+    # https://github.com/opal/opal/pull/1430 - included in Opal 0.10
     def +(other)
       other = Pathname.new(other) unless Pathname === other
       Pathname.new(plus(@path, other.to_s))
     end
 
-    # https://github.com/opal/opal/pull/1430
+    # https://github.com/opal/opal/pull/1430 - included in Opal 0.10
     def plus(path1, path2) # -> path # :nodoc:
       prefix2 = path2
       index_list2 = []
@@ -92,7 +93,7 @@ class Pathname
       end
     end
 
-    # https://github.com/opal/opal/pull/1430
+    # https://github.com/opal/opal/pull/1430 - included in Opal 0.10
     def join(*args)
       return self if args.empty?
       result = args.pop
@@ -132,6 +133,7 @@ class Pathname
     end
   end
 
+  # https://github.com/opal/opal/pull/1408 - pending
   unless Pathname.method_defined?(:entries)
     def entries
       Dir.entries(@path).map {|f| self.class.new(f) }
