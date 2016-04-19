@@ -195,12 +195,6 @@ describe('transpile', function(){
       })
     })
 
-    it('node convention', function() {
-      var result = doTranspile('require "./another_dependency"')
-
-      expect(result).to.match(/require\('!!the_loader_path\?file=\.%2Fanother_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
-    })
-
     it('JS require', function() {
       var result = doTranspile('require "pure_js"')
 

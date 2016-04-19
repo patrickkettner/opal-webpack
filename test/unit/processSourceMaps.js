@@ -25,8 +25,7 @@ describe('processSourceMaps', function(){
       relativeFileName: 'foo.rb'
     }
     const compiler = getCompiler(ruby, targetOptions)
-    compiler.$compile()
-    const result = compiler.$result()
+    const result = compiler.$to_s()
     const generatedSource = getGeneratedSource(prepend)
     const map = require('../../lib/processSourceMaps')(compiler, ruby, '/the/path/to/foo.rb', result, generatedSource)
     return {
