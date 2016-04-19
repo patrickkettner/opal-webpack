@@ -49,6 +49,6 @@ describe('resolveFilename', function(){
   })
 
   it('throws error if not found', function() {
-    expect(function() { resolveFilename('not_found.rb')}).to.throw(/Cannot find file - not_found.rb in load path .*\/test\/fixtures,.*\/test\/fixtures\/load_path/)
+    expect(function() { resolveFilename('not_found.rb')}).to.throw(/Cannot find file - not_found.rb in load path .*\/test\/fixtures.*\/test\/fixtures\/load_path/)
   })
 })
