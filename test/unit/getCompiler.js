@@ -26,6 +26,7 @@ describe('compiler', function(){
 
   function cleanBundlerCompilers() {
     execSync(`rm -rf ${path.resolve(__dirname, '../../vendor/opal-compiler-v*.js')}`)
+    execSync(`rm -rf ${path.resolve(__dirname, '../../vendor/opal-runtime-v*.js')}`)
   }
 
   it('loads an Opal compiler from a configurable file', function() {
