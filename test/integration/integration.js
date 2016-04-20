@@ -438,6 +438,20 @@ describe('integration', function(){
     })
   })
 
+  it('loads require_tree with nested directories', function (done) {
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_tree_nested.js')
+    })
+    webpack(config, function (err, stats) {
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
+
+      expect(runCode()).to.eq('we made it\n\n')
+
+      return done()
+    })
+  })
+
   it('loads require_tree without leading dot', function (done) {
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_tree_no_dot.js')
