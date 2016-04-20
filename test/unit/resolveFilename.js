@@ -30,6 +30,18 @@ describe('resolveFilename', function(){
     expect(result).to.match(/gems\/opal-browser-.*\/opal\/opal-browser\.rb/)
   })
 
+  it('resolves a JS filename with a suffix including a dot', function() {
+    const result = resolveFilename('js_file_with.suffix')
+
+    expect(result).to.eq(path.resolve(__dirname, '../fixtures/js_file_with.suffix.js'))
+  })
+
+  it('resolves a Ruby filename with a suffix including a dot', function() {
+    const result = resolveFilename('rb_file_with.suffix')
+
+    expect(result).to.eq(path.resolve(__dirname, '../fixtures/rb_file_with.suffix.rb'))
+  })
+
   it('resolves corelib/runtime as a JS file in Bundler mode', function() {
     this.timeout(12000)
 
