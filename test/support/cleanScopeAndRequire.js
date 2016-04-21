@@ -10,6 +10,7 @@ module.exports = function () {
   // fresh requires
   const clean = [
     'getOpalCompilerFilename',
+    'getOpalRuntimeFilename',
     'getCompiler',
     'opal',
     'bundlerCheck',
@@ -25,6 +26,7 @@ module.exports = function () {
   })
 
   delete require.cache[path.resolve(__dirname, '../../vendor/opal-compiler.js')]
+  delete require.cache[path.resolve(__dirname, '../../vendor/opal-runtime.js')]
   delete require.cache[path.resolve(__dirname, '../../index.js')]
   delete require.cache[path.resolve(__dirname, 'tweakedOpalCompiler.js')]
 
@@ -33,6 +35,7 @@ module.exports = function () {
   // back to original state
   env.OPAL_USE_BUNDLER = 'false'
   delete env.OPAL_COMPILER_PATH
+  delete env.OPAL_RUNTIME_PATH
   delete env.OPAL_MRI_REQUIRES
   delete env.OPAL_COMPILER_REQUIRES
   delete env.OPAL_COMPILER_LOAD_PATH
@@ -61,9 +64,16 @@ module.exports = function () {
   delete env.RAILS_ENV
 
   const removeReqs = []
+
   for (var reqFile in require.cache) {
     if (/opal-compiler-v.*js/.test(reqFile)) {
       removeReqs.push(reqFile)
+    }
+  }
+
+  for (var runtimeReqFile in require.cache) {
+    if (/opal-runtime-v.*js/.test(runtimeReqFile)) {
+      removeReqs.push(runtimeReqFile)
     }
   }
 

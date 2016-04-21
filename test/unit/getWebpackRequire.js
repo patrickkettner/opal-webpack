@@ -40,7 +40,6 @@ describe('getWebpackRequire', function(){
       sourceRoot: 'foo',
       filename: 'foo',
       sourceMap: 'foo',
-      relativeFileName: 'bar',
       stubs: 'bar',
       yes: 'yes',
       externalOpal: true

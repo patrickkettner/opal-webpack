@@ -81,7 +81,7 @@ module: {
 
 ### Requires
 
-With your Ruby/Opal `require` statements, you can either use the Sprockets/Ruby/Opal convention or you can use the node convention of `require './some_file'`, which will be relative to path of the file doing the require. If you do this though, you **must** consistently require the file that way. A require to 'some_file' will include the module a second time.
+With your Ruby/Opal `require` statements, you should use the Sprockets/Ruby/Opal convention (not the node convention of `require './something'`). `require_relative` can be used if you want to require something relative to the current file.
 
 If you want to use a Node based asset within Opal, you'll have to do this:
 

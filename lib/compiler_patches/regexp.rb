@@ -5,7 +5,7 @@ regexp_escaped_trailing_ok = begin
     false
 end
 
-# https://github.com/opal/opal/pull/1422
+# https://github.com/opal/opal/pull/1422 - already in 0.10
 # prevents RSpec compilation
 unless regexp_escaped_trailing_ok
   class Regexp
