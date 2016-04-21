@@ -81,7 +81,7 @@ module: {
 
 ### Requires
 
-With your Ruby/Opal `require` statements, you should use the Sprockets/Ruby/Opal convention (not the node convention of `require './something'`). `require_relative` can be used if you want to require something relative to the current file.
+With your Ruby/Opal `require` statements, you should use the Sprockets/Ruby/Opal convention (not the node convention of `require './something'`, at least until [this issue](https://github.com/cj/opal-webpack/issues/17) is dealt with). `require_relative` can be used if you want to require something relative to the current file.
 
 If you want to use a Node based asset within Opal, you'll have to do this:
 
@@ -202,7 +202,7 @@ Then you'll have assets compiled with the version of Opal that you have in your 
 
 **When to use it:** You like the default setup of this tool but want to hack around and use a different compiler. Not a common use case.
 
-**How:** set the `OPAL_COMPILER_PATH` environment variable to the compiled asset. You'll need to ensure it can do bootstrap compilation (see the `package.json` file for how we build ours).
+**How:** set the `OPAL_COMPILER_PATH` environment variable to the compiled asset and `OPAL_RUNTIME_PATH` to the file you want to be bundled for browsers when one of your assets does a `require 'opal'`. You'll need to ensure it can do bootstrap compilation (see the `package.json` file for how we build ours).
 
 ## Known issues/limitations
 * This loader uses a bootstrapped Opal compiler. This means that a compiled version of the compiler is compiling your code. There may some issues (like [this one](https://github.com/opal/opal/pull/1422)) that are still being addressed in Opal that affect the compiler.
