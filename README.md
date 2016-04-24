@@ -207,6 +207,7 @@ Then you'll have assets compiled with the version of Opal that you have in your 
 ## Known issues/limitations
 * This loader uses a bootstrapped Opal compiler. This means that a compiled version of the compiler is compiling your code. There may some issues (like [this one](https://github.com/opal/opal/pull/1422)) that are still being addressed in Opal that affect the compiler.
 * First time compiling is relatively slow compared to Ruby one, use `--watch` option for webpack to speed up dev iteration or use the cache option which will cache compiled assets to the filesystem.
+* Code splitting on Opal requires does not yet work
 * erb is not supported (which should be implemented as separate loader).
 
 ## Examples
