@@ -206,7 +206,7 @@ Then you'll have assets compiled with the version of Opal that you have in your 
 
 ### Code Splitting
 
-The code splitting feature of Webpack has not been extensively tested. What's for certain is that you cannot define vendor entry points for load path loaded files unless you use an absolue path. Example:
+The code splitting feature of Webpack has not been extensively tested with opal `require` statements. What's for certain is that you cannot define vendor entry points for load path loaded files unless you use an absolute path. Example:
 
 ```js
 module.exports = {
