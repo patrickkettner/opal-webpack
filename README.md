@@ -204,10 +204,33 @@ Then you'll have assets compiled with the version of Opal that you have in your 
 
 **How:** set the `OPAL_COMPILER_PATH` environment variable to the compiled asset and `OPAL_RUNTIME_PATH` to the file you want to be bundled for browsers when one of your assets does a `require 'opal'`. You'll need to ensure it can do bootstrap compilation (see the `package.json` file for how we build ours).
 
+### Code Splitting
+
+The code splitting feature of Webpack has not been extensively tested. What's for certain is that you cannot define vendor entry points for load path loaded files unless you use an absolue path. Example:
+
+```js
+module.exports = {
+  output: {
+    filename: 'bundle.js'
+  },
+  entry: {
+    app: './spec/javascripts/entry_point.js',
+    vendor: ['/Users/joe/.rbenv/versions/2.2.4/lib/ruby/gems/2.2.0/gems/react-rails-1.6.2.opal1/lib/assets/react-source/development-with-addons/react-server.js']
+  },
+  module: {
+    loaders: [
+      {
+        test: /\.rb$/,
+        loader: 'opal-webpack'
+      }
+  }
+}  
+```
+
 ## Known issues/limitations
 * This loader uses a bootstrapped Opal compiler. This means that a compiled version of the compiler is compiling your code. There may some issues (like [this one](https://github.com/opal/opal/pull/1422)) that are still being addressed in Opal that affect the compiler.
 * First time compiling is relatively slow compared to Ruby one, use `--watch` option for webpack to speed up dev iteration or use the cache option which will cache compiled assets to the filesystem.
-* Code splitting on Opal requires does not yet work
+* Code splitting on Opal requires has not been fully tested.
 * erb is not supported (which should be implemented as separate loader).
 
 ## Examples
