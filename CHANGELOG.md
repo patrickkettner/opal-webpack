@@ -1,3 +1,6 @@
+MASTER:
+* Remove unnecessary shell call to get Opal runtime version when using Bundler
+
 # v1.0.7:
 * Node style requires (e.g. `require './something'`) are back to not working now since we're using Opal Builder. Once an Opal defect is corrected, both Opal and this loader will have the same behavior as MRI.
 * Any files that Opal GEMs stub are now stubbed in the loader when using Bunder, Rails, or additional MRI requires
