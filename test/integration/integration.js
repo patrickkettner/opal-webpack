@@ -196,6 +196,19 @@ describe('integration', function(){
     })
   })
 
+  it('Allows requiring ruby files using a webpack require', function(done) {
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_wp_require_ruby_file.js')
+    })
+    webpack(config, (err, stats) => {
+      expect(err).to.be.null
+      expect(stats.compilation.errors).to.be.empty
+
+      expect(runCode()).to.eq('123\n\nwe made it\n\n')
+      return done()
+    })
+  })
+
   it('works with stubs', function (done) {
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_another_dep.js'),
