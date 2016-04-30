@@ -33,6 +33,8 @@ vendor/*.js
 # test files
 /tmp
 /test-results.xml
+/util/input
+/util/0.loader.js
 
 # packed NPM packages
 /*.tgz
