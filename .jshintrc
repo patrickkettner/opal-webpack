@@ -5,6 +5,7 @@
   "node": true,
   "globals": {
     "it": true,
+    "xit": true,
     "describe": true,
     "context": true,
     "beforeEach": true,
