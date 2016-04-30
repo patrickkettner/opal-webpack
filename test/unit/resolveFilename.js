@@ -33,13 +33,13 @@ describe('resolveFilename', function(){
   it('resolves a JS filename with a suffix including a dot', function() {
     const result = resolveFilename('js_file_with.suffix')
 
-    expect(result).to.eq(path.resolve(__dirname, '../fixtures/js_file_with.suffix.js'))
+    expect(result).to.eq(path.resolve(__dirname, '../../tmp/fixtures/js_file_with.suffix.js'))
   })
 
   it('resolves a Ruby filename with a suffix including a dot', function() {
     const result = resolveFilename('rb_file_with.suffix')
 
-    expect(result).to.eq(path.resolve(__dirname, '../fixtures/rb_file_with.suffix.rb'))
+    expect(result).to.eq(path.resolve(__dirname, '../../tmp/fixtures/rb_file_with.suffix.rb'))
   })
 
   it('resolves corelib/runtime as a JS file in Bundler mode', function() {
@@ -59,10 +59,10 @@ describe('resolveFilename', function(){
   it('resolves a test fixture', function() {
     const result = resolveFilename('arity_1')
 
-    expect(result).to.eq(path.resolve(__dirname, '../fixtures/arity_1.rb'))
+    expect(result).to.eq(path.resolve(__dirname, '../../tmp/fixtures/arity_1.rb'))
   })
 
   it('throws error if not found', function() {
-    expect(function() { resolveFilename('not_found.rb')}).to.throw(/Cannot find file - not_found.rb in load path .*\/test\/fixtures.*\/test\/fixtures\/load_path/)
+    expect(function() { resolveFilename('not_found.rb')}).to.throw(/Cannot find file - not_found.rb in load path .*\/tmp\/fixtures.*\/tmp\/fixtures\/load_path/)
   })
 })

@@ -119,7 +119,7 @@ describe('transpile', function(){
     it('standard', function() {
       var result = doTranspile('require "another_dependency"')
 
-      expect(result).to.match(/require\('!!the_loader_path\?file=another_dependency&requirable=true!.*\/test\/fixtures\/another_dependency\.rb'\);/)
+      expect(result).to.match(/require\('!!the_loader_path\?file=another_dependency&requirable=true!.*\/tmp\/fixtures\/another_dependency\.rb'\);/)
     })
 
     context('for compiler js file', function () {
@@ -203,7 +203,7 @@ describe('transpile', function(){
     it('JS require', function() {
       var result = doTranspile('require "pure_js"')
 
-      expect(result).to.match(/require\('.*test\/fixtures\/pure_js.js'\);/)
+      expect(result).to.match(/require\('.*tmp\/fixtures\/pure_js.js'\);/)
     })
 
     it('require_tree', function() {
