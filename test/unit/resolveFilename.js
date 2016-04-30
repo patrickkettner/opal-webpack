@@ -4,9 +4,13 @@ const expect = require('chai').expect
 const path = require('path')
 
 const cleanScopeAndRequire = require('../support/cleanScopeAndRequire')
+const helperModule = require('../integration/helper')
 
 describe('resolveFilename', function(){
   beforeEach(cleanScopeAndRequire)
+
+  // need our fixtures in tmp for these tests
+  helperModule.call(this)
 
   function resolveFilename(filename) {
     const targetOptions = {

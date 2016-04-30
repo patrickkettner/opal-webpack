@@ -7,9 +7,12 @@ const execSync = require('child_process').execSync
 const path = require('path')
 
 const cleanScopeAndRequire = require('../support/cleanScopeAndRequire')
+const helperModule = require('../integration/helper')
 
 describe('transpile', function(){
   const env = process.env
+  // need our fixtures in tmp for these tests
+  helperModule.call(this)
 
   beforeEach(cleanScopeAndRequire)
 
