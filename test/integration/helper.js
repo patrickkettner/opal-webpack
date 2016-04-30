@@ -20,18 +20,30 @@ module.exports = function() {
   const exportScope = {}
   this.timeout(40000)
   beforeEach(cleanScopeAndRequire)
-  beforeEach(function(done) {
-    fsExtra.mkdirp('./tmp', done)
-  })
 
   const env = process.env
   const tmpDir = path.resolve(__dirname, '../../tmp')
   const outputBaseDir = path.resolve(tmpDir, 'output')
   exportScope.cacheDir = path.join(outputBaseDir, 'cache')
-  const fixturesDir = path.resolve(__dirname, '../fixtures')
+  const fixturesSrcDir = path.resolve(__dirname, '../fixtures')
+  exportScope.fixturesDir = path.resolve(tmpDir, 'fixtures')
+  exportScope.outputDir = path.resolve(outputBaseDir, 'loader')
+
+  beforeEach(function(done) {
+    rimraf(tmpDir, function(err) {
+      if (err) {
+        return done(err)
+      }
+      mkdirp(exportScope.outputDir, done)
+    })
+  })
+
+  beforeEach(function(done) {
+    fsExtra.copy(fixturesSrcDir, exportScope.fixturesDir, done)
+  })
+
   exportScope.currentDirectoryExp = new RegExp(RegExp.escape(process.cwd()))
   exportScope.opalLoader = path.resolve(__dirname, '../../')
-  exportScope.outputDir = path.resolve(outputBaseDir, 'loader')
   exportScope.globalConfig = {
     output: {
       path: exportScope.outputDir,
@@ -46,7 +58,7 @@ module.exports = function() {
   }
 
   exportScope.aFixture = function(file) {
-    return path.join(fixturesDir, file)
+    return path.join(exportScope.fixturesDir, file)
   }
 
   exportScope.useTweakedCompiler = function() {
@@ -98,28 +110,6 @@ module.exports = function() {
       //console.log(`Running command: ${command}`)
     return execSync(command).toString()
   }
-
-  const dependencyMain = exportScope.aFixture('dependency.rb')
-  const dependencyBackup = exportScope.aFixture('dependency.rb.backup')
-
-  beforeEach(function(done) {
-    fsExtra.copySync(dependencyMain, dependencyBackup, {
-      clobber: true
-    })
-    rimraf(outputBaseDir, function(err) {
-      if (err) {
-        return done(err)
-      }
-      mkdirp(exportScope.outputDir, done)
-    })
-  })
-
-  afterEach(function(done) {
-    // cleanup
-    fsExtra.copy(dependencyBackup, dependencyMain, {
-      clobber: true
-    }, done)
-  })
 
   return exportScope
 }

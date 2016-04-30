@@ -86,8 +86,8 @@ describe('integration caching', function() {
         expect(err).to.be.null
         expect(files).to.have.length(2)
         var output = helperFunctions.runSourceMapDependentCode()
-        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps\.rb:4:3\)/)
-        expect(output).to.match(/output\/loader\/webpack:\/test\/fixtures\/source_maps.rb:7:1\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/tmp\/fixtures\/source_maps\.rb:4:3\)/)
+        expect(output).to.match(/output\/loader\/webpack:\/tmp\/fixtures\/source_maps.rb:7:1\)/)
         return done()
       })
     })

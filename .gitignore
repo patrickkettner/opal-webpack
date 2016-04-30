@@ -31,7 +31,6 @@ node_modules
 vendor/*.js
 
 # test files
-test/fixtures/*.backup
 /tmp
 /test-results.xml
 
