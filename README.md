@@ -96,6 +96,8 @@ puts result
 Since Ruby require does not return a value for the module the way that node requires do, this is the only way you can get
 a reference to the module.
 
+NOTE: If you use `require_tree`, the file containing the statement will not be cached by either the persistent cache with this loader OR with webpack's in memory cache. This ensures that additional files, in watch mode, will be picked up by Webpack. You can mitigate the performance impact of this by not including much logic in files with `require_tree` besides the `require_tree` statements.
+
 ### Load path
 
 Currently, the loader does not use webpack's `moduleDirectories` for finding assets that you `require` in Opal. See [this issue](https://github.com/cj/opal-webpack/issues/7).
