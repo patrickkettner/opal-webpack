@@ -86,7 +86,7 @@ describe('integration require_tree', function() {
   })
 
   // https://github.com/cj/opal-webpack/issues/35
-  it('picks up new files in require_tree directories', function(done) {
+  it('picks up new files in require_tree directories watch2', function(done) {
     const config = assign({}, helperFunctions.globalConfig, {
       entry: helperFunctions.aFixture('entry_tree.js')
     })
