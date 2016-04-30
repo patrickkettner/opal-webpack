@@ -40,10 +40,21 @@ module.exports = function(source) {
   const cacheDirectory = options.cacheDirectory
   const cacheIdentifier = options.cacheIdentifier
 
-  this.cacheable()
+  const loaderContext = this
 
-  const currentLoader = getCurrentLoader(this)
-  const transpileInContext = function(source, opt) { return transpile(source, opt, currentLoader) }
+  const transpileInContext = function(source, opt) {
+    const currentLoader = getCurrentLoader(loaderContext)
+    const compileResult = transpile(source, opt, currentLoader)
+    // can't easily know when require_tree file contents have changed
+    if (compileResult.requireTrees) {
+      // keep Opal specific stuff out of fs-cache.js
+      compileResult.doNotCache = true
+    }
+    else {
+      loaderContext.cacheable()
+    }
+    return compileResult
+  }
 
   if (cacheDirectory) {
     var callback = this.async()
@@ -56,6 +67,10 @@ module.exports = function(source) {
     }, function(err, result) {
       if (err) {
         return callback(err)
+      }
+      // see above
+      if (!result.doNotCache) {
+        loaderContext.cacheable()
       }
       return callback(null, result.code, result.map)
     })

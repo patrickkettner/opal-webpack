@@ -36852,6 +36852,12 @@ Opal.modules["compiler_patches/webpack_builder"] = function(Opal) {
 
       self.$attr_reader("requires");
 
+      Opal.defn(self, '$require_trees?', TMP_2 = function() {
+        var self = this;
+
+        return self.require_trees;
+      }, TMP_2.$$arity = 0);
+
       return (Opal.defn(self, '$build_str', TMP_1 = function ːbuild_str(source, filename, options) {
         var $a, self = this, path = nil, asset = nil;
 
@@ -36863,6 +36869,7 @@ Opal.modules["compiler_patches/webpack_builder"] = function(Opal) {
           path = self.$path_reader().$expand(filename).$to_s()
         };
         asset = self.$processor_for(source, filename, path, options);
+        self.require_trees = asset.$required_trees()['$any?']();
         self.requires = $rb_plus($rb_plus(self.$preload(), asset.$requires()), self.$tree_requires(asset, path));
         self.$processed()['$<<'](asset);
         return self;

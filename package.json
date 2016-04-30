@@ -11,8 +11,9 @@
   "scripts": {
     "build_compiler": "opal --no-exit -ghike --no-opal -Ilib -c lib/compiler.rb | uglifyjs > vendor/opal-compiler.js",
     "build_runtime": "echo '' | opal --no-exit -c | uglifyjs > vendor/opal-runtime.js",
-    "test": "npm run test_only -- test/unit test/integration",
-    "test_only": "PATH=test/support:$PATH OPAL_USE_BUNDLER=false OPAL_LOAD_PATH=./test/fixtures:./test/fixtures/load_path mocha",
+    "test": "npm run test_only -- test/unit test/integration -i -g watch2",
+    "test2": "npm run test_only -- test/integration -g watch2",
+    "test_only": "PATH=test/support:$PATH OPAL_USE_BUNDLER=false OPAL_LOAD_PATH=./tmp/fixtures:./tmp/fixtures/load_path mocha",
     "prepare": "npm run build_compiler && npm run build_runtime",
     "prepublish": "npm run prepare",
     "eslint": "eslint index.js lib test",

@@ -1,5 +1,7 @@
-MASTER:
+# MASTER:
 * Remove unnecessary shell call to get Opal runtime version when using Bundler
+* Streamline Opal runtime file fetching
+* Fix require_tree cache issue (#35)
 
 # v1.0.7:
 * Node style requires (e.g. `require './something'`) are back to not working now since we're using Opal Builder. Once an Opal defect is corrected, both Opal and this loader will have the same behavior as MRI.
