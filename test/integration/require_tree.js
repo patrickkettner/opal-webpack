@@ -86,7 +86,7 @@ describe('integration require_tree', function() {
   })
 
   // https://github.com/cj/opal-webpack/issues/35
-  xit('picks up new files in require_tree directories', function(done) {
+  it.only('picks up new files in require_tree directories', function(done) {
     const config = assign({}, helperFunctions.globalConfig, {
       entry: helperFunctions.aFixture('entry_tree.js')
     })
@@ -97,10 +97,13 @@ describe('integration require_tree', function() {
       expect(err).to.be.null
       const compilation = stats.compilation
       expect(compilation.errors).to.be.empty
-      if (runCount == 1) {
-        // TODO: Assert the usual require tree stuff, then add a file to the tree dir
-      } else if (runCount == 2) {
-        // TODO: Assert the new file is there, then stop the watcher and call done()
+      if (runCount == 2) {
+        expect(helperFunctions.runCode()).to.eq('inside the tree\n\n')
+        fs.writeFile(path.resolve(helperFunctions.fixturesDir, 'tree/file3.rb'), 'puts "another"')
+        fs.writeFile(helperFunctions.aFixture('entry_tree.js'), "require('./tree.rb')")
+      } else if (runCount == 3) {
+        expect(helperFunctions.runCode()).to.eq('inside the tree\n\nanother\n\n')
+        watcher.close(done)
       }
     })
   })
