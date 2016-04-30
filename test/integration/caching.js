@@ -6,6 +6,7 @@ const webpack = require('webpack')
 const expect = require('chai').expect
 const assign = require('object-assign')
 const fs = require('fs')
+const path = require('path')
 
 const helperModule = require('./helper')
 
@@ -94,7 +95,7 @@ describe('integration caching', function() {
   })
 
   // https://github.com/cj/opal-webpack/issues/35
-  it.only('picks up new files in require_tree directories when caching', function(done) {
+  it('picks up new files in require_tree directories when caching', function(done) {
     const config = assign({}, helperFunctions.globalConfig, {
       entry: helperFunctions.aFixture('entry_tree.js'),
       opal: {
@@ -108,11 +109,11 @@ describe('integration caching', function() {
       expect(err).to.be.null
       const compilation = stats.compilation
       expect(compilation.errors).to.be.empty
-      if (runCount == 2) {
+      if (runCount == 1) {
         expect(helperFunctions.runCode()).to.eq('inside the tree\n\n')
         fs.writeFile(path.resolve(helperFunctions.fixturesDir, 'tree/file3.rb'), 'puts "another"')
         fs.writeFile(helperFunctions.aFixture('entry_tree.js'), "require('./tree.rb')")
-      } else if (runCount == 3) {
+      } else if (runCount == 2) {
         expect(helperFunctions.runCode()).to.eq('inside the tree\n\nanother\n\n')
         watcher.close(done)
       }

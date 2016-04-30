@@ -32,21 +32,27 @@ describe('transpile', function(){
     env.OPAL_RUNTIME_PATH = path.resolve(__dirname, '../support/tweakedOpalRuntime.js')
   }
 
-  function doTranspile(code, options, filename, relativeFileName) {
+  function getCompiler(code, options, filename, relativeFileName) {
     const targetOptions = {
       sourceRoot: process.cwd(),
       filename: filename || 'foo.rb',
       file: relativeFileName || 'foo.rb'
     }
     Object.assign(targetOptions, options)
-    return transpile(code, targetOptions, wpContext).code
+    return transpile(code, targetOptions, wpContext)
+  }
+
+  function doTranspile(code, options, filename, relativeFileName) {
+    return getCompiler(code, options, filename, relativeFileName).code
   }
 
   it('compiles an endpoint', function() {
-    var result = doTranspile('HELLO=123')
+    const result = getCompiler('HELLO=123')
+    const code = result.code
 
-    expect(result).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
-    expect(result).to.not.include('Opal.modules')
+    expect(code).to.include('Opal.cdecl($scope, \'HELLO\', 123)')
+    expect(code).to.not.include('Opal.modules')
+    expect(result.requireTrees).to.be.false
   })
 
   it('passes bundled opal runtime through', function() {
@@ -89,7 +95,7 @@ describe('transpile', function(){
   })
 
   it('can use a Bundler provided version of Opal', function () {
-    this.timeout(6000)
+    this.timeout(10000)
 
     env.OPAL_USE_BUNDLER = 'true'
 
@@ -113,6 +119,12 @@ describe('transpile', function(){
 
     var result = doTranspile("require 'addtl_stub'")
     expect(result).to.include('Opal.modules["addtl_stub"]')
+  })
+
+  it('indicates whether require_trees were used', function() {
+    const result = getCompiler('require_tree "./tree"', {}, path.resolve(__dirname, '../fixtures/tree.rb'), 'tree.rb')
+
+    expect(result.requireTrees).to.be.true
   })
 
   describe('webpack requires', function() {
