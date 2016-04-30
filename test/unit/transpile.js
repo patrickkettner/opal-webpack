@@ -1,5 +1,7 @@
 'use strict'
 
+/*jshint expr: true*/
+
 const expect = require('chai').expect
 const execSync = require('child_process').execSync
 const path = require('path')
