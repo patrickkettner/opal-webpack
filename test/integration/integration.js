@@ -494,6 +494,27 @@ describe('integration', function(){
     })
   })
 
+  // https://github.com/cj/opal-webpack/issues/35
+  it('picks up new files in require_tree directories', function(done) {
+    const config = assign({}, globalConfig, {
+      entry: aFixture('entry_tree.js')
+    })
+    const compiler = webpack(config)
+    var runCount = 0
+    var watcher = compiler.watch({}, (err, stats) => {
+      runCount += 1
+      expect(err).to.be.null
+      const compilation = stats.compilation
+      expect(compilation.errors).to.be.empty
+      if (runCount == 1) {
+        // TODO: Assert the usual require tree stuff, then add a file to the tree dir
+      }
+      else if (runCount == 2) {
+        // TODO: Assert the new file is there, then stop the watcher and call done()
+      }
+    })
+  })
+
   it('loads require_relative', function (done) {
     const config = assign({}, globalConfig, {
       entry: aFixture('entry_relative.js')
