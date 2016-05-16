@@ -1,4 +1,5 @@
-# MASTER:
+# v1.0.8:
+* Only need to require opal when useBundler is set and not rails
 * Remove unnecessary shell call to get Opal runtime version when using Bundler
 * Streamline Opal runtime file fetching
 * Fix require_tree cache issue (#35)
