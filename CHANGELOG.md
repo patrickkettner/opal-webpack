@@ -1,4 +1,4 @@
-# MASTER:
+# v1.0.8:
 * Remove unnecessary shell call to get Opal runtime version when using Bundler
 * Streamline Opal runtime file fetching
 * Fix require_tree cache issue (#35)
