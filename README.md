@@ -118,12 +118,43 @@ To tell the Opal compiler to stub out certain dependencies, do this
     loaders: [
       {
         test: /\.rb?$/,
-        loader: 'opalrb-loader'
+        loader: 'opal-webpack'
       }
     ]
   },
   opal: {
     stubs: ['dependency']
+  }
+}
+```
+
+### Subloaders
+
+Because of the way that opal-webpack has to be structured internally, you are not
+able to chain loaders in the normal way if you want to moidfy the ruby files
+before they are sent to Opal. As an alternative, we have the concept of subloaders.
+These act exactly the same as the normal `loaders` object, just defined directly
+on the options for opal-webpack.
+
+```js
+{
+  module: {
+    entry: 'opal-webpack!./main.rb'
+  },
+  opal: {
+    loaders: [{
+      test: /foo.rb?$/,
+      loader: 'foo-loader'
+    }, {
+      test: /bar.rb?$/,
+      loader: ['bar-loader', 'baz']
+    }, {
+      test: /qux.rb?$/,
+      loader: 'fake-loader',
+      query: {
+        other: 'thing'
+      }
+    }]
   }
 }
 ```
