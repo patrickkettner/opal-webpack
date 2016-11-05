@@ -28,7 +28,7 @@ node_modules
 **/bundle.js.map
 
 # Built files
-vendor/*.js
+#vendor/*.js
 
 # test files
 /tmp
